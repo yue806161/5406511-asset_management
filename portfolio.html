@@ -417,10 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderPortKPI(port, holdings, aum, color, ytd) {
   const avgYTD = (holdings.reduce((s,h)=>s+h.change,0)/holdings.length).toFixed(2);
   document.getElementById('kpi-' + port).innerHTML = [
-    { label:'投組總值',   value: fmtUSD(aum),            sub: '' },
-    { label:'YTD 表現',   value: fmtPct(ytd),             sub: `vs 基準`, cls: changeClass(ytd) },
+    { label:'投組總值',   value: fmtUSD(aum), sub: '' },
+    { label:'YTD 表現 (vs 基準)',   value: fmtPct(ytd), sub: '', cls: changeClass(ytd) },
     { label:'持倉數量',   value: holdings.length + ' 筆', sub: '' },
-    { label:'平均持倉YTD',value: fmtPct(parseFloat(avgYTD)), sub:'', cls: changeClass(parseFloat(avgYTD)) }
+    { label:'平均持倉YTD',value: fmtPct(parseFloat(avgYTD)),  sub:'', cls: changeClass(parseFloat(avgYTD)) }
   ].map(k => `<div class="col-6 col-md-3"><div class="metric-card">
     <div class="m-label">${k.label}</div>
     <div class="m-value ${k.cls||''}" style="color:${color};">${k.value}</div>

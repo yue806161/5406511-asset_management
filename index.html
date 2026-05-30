@@ -571,11 +571,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Per-portfolio risk table
   document.getElementById('port-risk-table').innerHTML = `
-    <table class="data-table" style="font-size:12px;">
-      <thead><tr><th>投組</th><th class="td-num">波動率</th><th class="td-num">夏普</th><th class="td-num">最大回撤</th><th class="td-num">Beta</th><th class="td-num">Alpha</th></tr></thead>
+    <table class="data-table" style="font-size:12px;table-layout:fixed;width:100%;">
+      <colgroup>
+        <col style="width:22%">
+        <col style="width:13%"><col style="width:13%">
+        <col style="width:17%"><col style="width:13%"><col style="width:13%">
+      </colgroup>
+      <thead><tr>
+        <th style="white-space:nowrap;">投組</th>
+        <th class="td-num" style="white-space:nowrap;">波動率</th>
+        <th class="td-num" style="white-space:nowrap;">夏普</th>
+        <th class="td-num" style="white-space:nowrap;">最大回撤</th>
+        <th class="td-num">Beta</th>
+        <th class="td-num">Alpha</th>
+      </tr></thead>
       <tbody>
         <tr>
-          <td><span class="badge-port-a">境外 A</span></td>
+          <td style="white-space:nowrap;"><span class="badge-port-a" style="white-space:nowrap;">境外 A</span></td>
           <td class="td-num">${rm.portA.volatility}%</td>
           <td class="td-num text-up fw-600">${rm.portA.sharpe}</td>
           <td class="td-num text-down">${rm.portA.maxDrawdown}%</td>
@@ -583,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td class="td-num text-up fw-600">${fmtPct(rm.portA.alpha)}</td>
         </tr>
         <tr>
-          <td><span class="badge-port-b">境內 B</span></td>
+          <td style="white-space:nowrap;"><span class="badge-port-b" style="white-space:nowrap;">境內 B</span></td>
           <td class="td-num">${rm.portB.volatility}%</td>
           <td class="td-num text-up fw-600">${rm.portB.sharpe}</td>
           <td class="td-num text-down">${rm.portB.maxDrawdown}%</td>
@@ -591,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td class="td-num text-up fw-600">${fmtPct(rm.portB.alpha)}</td>
         </tr>
         <tr>
-          <td><span class="badge-port-c">融資 C</span></td>
+          <td style="white-space:nowrap;"><span class="badge-port-c" style="white-space:nowrap;">融資 C</span></td>
           <td class="td-num" style="color:${rm.portC.volatility>20?'#DC3545':'inherit'}">${rm.portC.volatility}%${rm.portC.volatility>20?' ⚠️':''}</td>
           <td class="td-num">${rm.portC.sharpe}</td>
           <td class="td-num text-down">${rm.portC.maxDrawdown}%</td>

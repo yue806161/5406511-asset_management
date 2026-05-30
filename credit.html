@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>銀行與融資 — Family Capital Platform</title>
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="market-ticker-wrap"><div class="market-ticker"><div class="market-ticker-inner" id="ticker-inner"></div></div></div>
+    <div class="topbar">
+      <span class="topbar-title">銀行與融資</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3"><i class="fa-solid fa-circle-user"></i><span>陳○○</span></div>
+    </div>
+    <div class="page-body">
+      <div class="breadcrumb-row">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <span class="sep">/</span><span>銀行與融資</span>
+      </div>
+
+      <!-- ── KPI Row ── -->
+      <div class="kpi-grid mb-3" id="credit-kpis"></div>
+
+      <!-- ── Lombard LTV Panel + Doughnut ── -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-8">
+          <div class="section-card h-100">
+            <div class="card-header-row">
+              <div class="card-title"><i class="fa-solid fa-chart-column me-1"></i>倫巴德貸款 LTV 監控</div>
+              <span class="badge-warn">⚠ 警戒線 60% / 上限 65%</span>
+            </div>
+            <div class="reg-bar">
+              <span class="reg-label"><i class="fa-solid fa-scale-balanced me-1"></i>法規依據</span>
+              <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>財管2.0 跨境融資規定</span>
+              <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>103年令（外幣質押境內用途）</span>
+              <span class="reg-tag"><i class="fa-solid fa-building-columns"></i>銀行法 § 32（關係人授信）</span>
+              <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>外匯收支或交易申報辦法</span>
+            </div>
+            <div class="mb-3 p-3 rounded" style="background:#fff8e1;border:1px solid #ffe082;font-size:12px;color:#5d4037;">
+              <i class="fa-solid fa-circle-info me-1"></i>
+              <strong>倫巴德貸款架構</strong>：各銀行 OBU 外幣資產作為質押品，由<strong>同一銀行 DBU</strong> 提供新台幣倫巴德貸款。
+              融資後資金限用於台灣產業投資（財管2.0 / 地方資產管理專區規定）。
+            </div>
+            <div id="ltv-detail"></div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="section-card h-100">
+            <div class="card-title mb-3"><i class="fa-solid fa-chart-pie me-1"></i>額度使用率</div>
+            <div class="chart-container d-flex justify-content-center" style="height:200px;">
+              <canvas id="chart-ltv-donut"></canvas>
+              <div class="chart-donut-center">
+                <div style="font-size:18px;font-weight:700;color:#0D2746;" id="ltv-usage-pct"></div>
+                <div style="font-size:11px;color:#6B7280;">已使用</div>
+              </div>
+            </div>
+            <div class="mt-3" id="ltv-donut-legend"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Bank Facilities Table ── -->
+      <div class="section-card mb-3">
+        <div class="card-header-row">
+          <div class="card-title"><i class="fa-solid fa-table me-1"></i>銀行授信設施明細（OBU/DBU 同行配對）</div>
+        </div>
+        <div class="overflow-auto">
+          <table class="data-table" id="facilities-table">
+            <thead><tr>
+              <th>銀行</th>
+              <th>OBU 外幣資產</th>
+              <th>DBU 授信類型</th>
+              <th class="td-num">授信額度</th>
+              <th class="td-num">已動用</th>
+              <th class="td-num">使用率</th>
+              <th class="td-num">LTV</th>
+              <th class="td-num">利率</th>
+              <th>幣別</th>
+              <th>狀態</th>
+            </tr></thead>
+            <tbody id="facilities-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Fund Flow ── -->
+      <div class="section-card mb-3">
+        <div class="card-title mb-2"><i class="fa-solid fa-arrows-split-up-and-left me-1"></i>融資後資金流向追蹤</div>
+        <div class="reg-bar">
+          <span class="reg-label"><i class="fa-solid fa-scale-balanced me-1"></i>法規依據</span>
+          <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>財管2.0 § 境內資金運用</span>
+          <span class="reg-tag"><i class="fa-solid fa-flag"></i>地方資產管理專區試辦業務作業原則</span>
+          <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>103年令：境內限制用途</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-12 col-lg-7">
+            <!-- Sankey-like visual using styled divs -->
+            <div class="d-flex flex-column gap-2">
+              <div style="background:#0D2746;color:#fff;border-radius:10px;padding:14px 18px;">
+                <div style="font-size:12px;opacity:0.7;">境外質押資產（OBU）</div>
+                <div style="font-weight:700;">A/B/C 銀行 OBU 資產 ≈ USD 70M</div>
+              </div>
+              <div class="text-center text-muted fs-12">↓ 質押抵押 ↓</div>
+              <div style="background:#2E6DB4;color:#fff;border-radius:10px;padding:14px 18px;">
+                <div style="font-size:12px;opacity:0.7;">倫巴德貸款（DBU）</div>
+                <div style="font-weight:700;">A/B/C 銀行 DBU 倫巴德融資 ≈ NTD 32.7M 等值</div>
+              </div>
+              <div class="text-center text-muted fs-12">↓ 融資後資金 ↓</div>
+              <div style="background:#B8960C;color:#fff;border-radius:10px;padding:14px 18px;">
+                <div style="font-size:12px;opacity:0.7;">融資後資金（限境內台灣產業）</div>
+                <div style="font-weight:700;">融資後資金 C ≈ USD 15M（已部署 / 待部署）</div>
+                <div style="font-size:11px;opacity:0.8;margin-top:4px;">📌 依財管2.0及地方資產管理專區規定，僅限台灣產業投資</div>
+              </div>
+              <div class="text-center text-muted fs-12">↓ 投資去向 ↓</div>
+              <div class="row g-2">
+                <div class="col-6"><div style="background:#F0F4FB;border:2px solid #0D2746;border-radius:10px;padding:12px;text-align:center;font-size:12px;"><i class="fa-solid fa-microchip" style="color:#0D2746;"></i><div class="fw-600 mt-1">半導體/IC設計</div><div>38%</div></div></div>
+                <div class="col-6"><div style="background:#F0F4FB;border:2px solid #2E6DB4;border-radius:10px;padding:12px;text-align:center;font-size:12px;"><i class="fa-solid fa-heartbeat" style="color:#2E6DB4;"></i><div class="fw-600 mt-1">生技醫療</div><div>24%</div></div></div>
+                <div class="col-6"><div style="background:#F0F4FB;border:2px solid #4CA3DD;border-radius:10px;padding:12px;text-align:center;font-size:12px;"><i class="fa-solid fa-leaf" style="color:#4CA3DD;"></i><div class="fw-600 mt-1">新能源/ESG</div><div>18%</div></div></div>
+                <div class="col-6"><div style="background:#F0F4FB;border:2px solid #7EC8E3;border-radius:10px;padding:12px;text-align:center;font-size:12px;"><i class="fa-solid fa-robot" style="color:#7EC8E3;"></i><div class="fw-600 mt-1">智慧製造/AI</div><div>12%</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="section-card h-100" style="background:#F3F5F8;">
+              <div class="card-title mb-3">融資後資金部署進度</div>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="fs-12">已部署</span>
+                  <span class="fs-12 fw-600">USD 15.0M / 20.0M 目標</span>
+                </div>
+                <div class="progress-bar-custom">
+                  <div class="progress-bar-fill" style="width:75%;background:#B8960C;"></div>
+                </div>
+                <div class="fs-12 text-muted mt-1">75% 完成</div>
+              </div>
+              <div style="position:relative;height:220px;"><canvas id="chart-flow"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Collateral Assets ── -->
+      <div class="section-card">
+        <div class="card-title mb-3"><i class="fa-solid fa-lock me-1"></i>已質押資產清單</div>
+        <div class="overflow-auto">
+          <table class="data-table" id="pledged-table">
+            <thead><tr>
+              <th>資產名稱</th><th>類型</th><th>對應銀行</th>
+              <th class="td-num">資產估值</th><th class="td-num">貸款金額</th><th class="td-num">LTV</th>
+            </tr></thead>
+            <tbody id="pledged-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('銀行與融資');
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+
+  const c = MOCK.credit;
+  const usedPct = (c.used / c.totalLimit * 100).toFixed(1);
+
+  // KPIs
+  document.getElementById('credit-kpis').innerHTML = [
+    { label: '總授信額度',    value: fmtUSD(c.totalLimit),       icon: 'fa-credit-card',           color: '#0D2746' },
+    { label: '已動用',        value: fmtUSD(c.used),             icon: 'fa-circle-minus',           color: '#DC3545' },
+    { label: '可用額度',      value: fmtUSD(c.totalLimit-c.used),icon: 'fa-circle-check',           color: '#28A745' },
+    { label: '槓桿比率',      value: c.leverageRatio + '%',      icon: 'fa-scale-unbalanced',       color: '#B8960C' },
+    { label: '加權平均利率',  value: c.avgCost + '%',            icon: 'fa-percent',                color: '#2E6DB4' },
+    { label: '境內投資部署',  value: fmtUSD(c.lombardFundsForDomestic), icon:'fa-flag',            color: '#B8960C' }
+  ].map(k => `<div class="stat-card">
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <i class="fa-solid ${k.icon}" style="color:${k.color};font-size:15px;"></i>
+      <span class="card-label mb-0">${k.label}</span>
+    </div>
+    <div class="card-value" style="font-size:19px;">${k.value}</div>
+  </div>`).join('');
+
+  // LTV detail
+  document.getElementById('ltv-detail').innerHTML = MOCK.banks.filter(b => b.dbuLoan).map(b => {
+    const loan = b.dbuLoan;
+    const barColor  = loan.ltv >= 60 ? '#DC3545' : loan.ltv >= 50 ? '#B8960C' : '#28A745';
+    const statusBadge = loan.ltv >= 60 ? 'badge-warning' : loan.ltv >= 50 ? 'badge-warn' : 'badge-ok';
+    const statusText  = loan.ltv >= 60 ? '警示' : loan.ltv >= 50 ? '注意' : '正常';
+    return `<div class="p-3 mb-2 rounded" style="background:#F8F9FB;border:1px solid var(--border);">
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <div>
+          <span class="fw-700" style="font-size:14px;">${b.name}</span>
+          <span class="fs-12 text-muted ms-2">OBU 資產 ${fmtUSD(b.obuAssets)} → DBU ${loan.type}</span>
+        </div>
+        <span class="${statusBadge}">${statusText}</span>
+      </div>
+      <div class="row g-2 mb-2">
+        <div class="col-3"><div class="fs-12 text-muted">授信額度</div><div class="fw-600">${fmtUSD(loan.limit)}</div></div>
+        <div class="col-3"><div class="fs-12 text-muted">已動用</div><div class="fw-600">${fmtUSD(loan.used)}</div></div>
+        <div class="col-3"><div class="fs-12 text-muted">利率</div><div class="fw-600">${loan.rate}%</div></div>
+        <div class="col-3"><div class="fs-12 text-muted">幣別</div><div class="fw-600">${loan.currency}</div></div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-12 text-muted" style="min-width:30px;">LTV</span>
+        <div class="flex-1 progress-bar-custom" style="flex:1;">
+          <div class="progress-bar-fill" style="width:${loan.ltv}%;background:${barColor};"></div>
+        </div>
+        <span class="fs-12 fw-700" style="color:${barColor};min-width:45px;">${loan.ltv}%</span>
+        <span class="fs-12 text-muted">/ ${loan.ltvLimit}%</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Donut
+  document.getElementById('ltv-usage-pct').textContent = usedPct + '%';
+  new Chart(document.getElementById('chart-ltv-donut').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['已動用', '可用'],
+      datasets: [{ data: [c.used, c.totalLimit - c.used], backgroundColor: ['#DC3545', '#E9ECEF'], borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: { cutout: '65%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+  document.getElementById('ltv-donut-legend').innerHTML =
+    `<div class="d-flex justify-content-between fs-12 mb-1"><span><span style="background:#DC3545;display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;"></span>已動用</span><span class="fw-600">${fmtUSD(c.used)}</span></div>
+     <div class="d-flex justify-content-between fs-12"><span><span style="background:#E9ECEF;display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;"></span>可用</span><span class="fw-600">${fmtUSD(c.totalLimit - c.used)}</span></div>`;
+
+  // Facilities table
+  document.getElementById('facilities-body').innerHTML = MOCK.banks.map(b => {
+    if (!b.dbuLoan) return `<tr>
+      <td class="fw-700">${b.name}</td>
+      <td>${fmtUSD(b.obuAssets)}</td>
+      <td colspan="7" class="text-muted fs-12">— 尚未設立倫巴德授信 —</td>
+    </tr>`;
+    const l = b.dbuLoan;
+    const usePct = (l.used / l.limit * 100).toFixed(1);
+    const barColor = l.ltv >= 60 ? '#DC3545' : l.ltv >= 50 ? '#B8960C' : '#28A745';
+    return `<tr>
+      <td class="fw-700">${b.name}</td>
+      <td>${fmtUSD(b.obuAssets)}</td>
+      <td>${l.type}</td>
+      <td class="td-num">${fmtUSD(l.limit)}</td>
+      <td class="td-num">${fmtUSD(l.used)}</td>
+      <td class="td-num">
+        <div class="progress-bar-custom" style="width:80px;display:inline-block;vertical-align:middle;">
+          <div class="progress-bar-fill" style="width:${usePct}%;background:#0D2746;"></div>
+        </div>
+        <span class="ms-1">${usePct}%</span>
+      </td>
+      <td class="td-num fw-700" style="color:${barColor};">${l.ltv}%</td>
+      <td class="td-num">${l.rate}%</td>
+      <td>${l.currency}</td>
+      <td><span class="${l.ltv>=60?'badge-warning':l.ltv>=50?'badge-warn':'badge-ok'}">${l.ltv>=60?'警示':l.ltv>=50?'注意':'正常'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Flow chart (monthly deployment)
+  new Chart(document.getElementById('chart-flow').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['1月','2月','3月','4月','5月'],
+      datasets: [{ label: '累計部署 (USD M)', data: [3, 6, 9, 12, 15], backgroundColor: '#B8960C', borderRadius: 6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: v => '$' + v + 'M' }, grid: { color: '#F3F5F8' }, max: 20 }, x: { grid: { display: false } } }
+    }
+  });
+
+  // Pledged assets
+  const pledged = MOCK.holdingsA.filter(h => h.pledged);
+  document.getElementById('pledged-body').innerHTML = pledged.map(h => {
+    const bank = MOCK.banks.find(b => b.id === h.bank);
+    const loanAmt = bank && bank.dbuLoan ? bank.dbuLoan.used / MOCK.holdingsA.filter(x => x.bank === h.bank && x.pledged).length : 0;
+    const ltv = bank && bank.dbuLoan ? bank.dbuLoan.ltv : 0;
+    return `<tr>
+      <td class="fw-600">${h.name}</td>
+      <td>${h.type}</td>
+      <td>${h.bank}銀行</td>
+      <td class="td-num">${fmtUSD(h.value)}</td>
+      <td class="td-num">${fmtUSD(loanAmt)}</td>
+      <td class="td-num fw-600" style="color:${ltv>=60?'#DC3545':ltv>=50?'#B8960C':'#28A745'};">${ltv}%</td>
+    </tr>`;
+  }).join('');
+});
+</script>
+</body>
+</html>

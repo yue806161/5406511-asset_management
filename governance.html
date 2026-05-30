@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家族治理 FMO — Family Capital Platform</title>
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ── Governance-specific styles ── */
+.org-node {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  text-align: center;
+  position: relative;
+}
+.org-node.level-0 { border-top: 3px solid #0D2746; }
+.org-node.level-1 { border-top: 3px solid #2E6DB4; }
+.org-node.level-2 { border-top: 3px solid #4CA3DD; background: #F8F9FB; }
+.org-node .role   { font-size: 10px; color: var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+.org-node .name   { font-size: 13px; font-weight: 700; color: var(--primary); margin: 3px 0 6px; }
+.org-node .duty   { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.org-connector { width: 2px; background: #DEE2E6; margin: 0 auto; height: 20px; }
+.org-hline     { height: 2px; background: #DEE2E6; }
+
+.vote-card { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 18px 20px; }
+.vote-card .vote-title { font-size: 14px; font-weight: 700; color: var(--primary); }
+.vote-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #F3F5F8; }
+.vote-row:last-child { border-bottom: none; }
+.vote-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.vote-btn-approve { background: #d4edda; color: #155724; border: none; border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.vote-btn-reject  { background: #f8d7da; color: #721c24; border: none; border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.vote-btn-pending { background: #fff3cd; color: #856404; border: none; border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+
+.progress-ring { transform: rotate(-90deg); }
+.charter-article { padding: 14px 16px; border-left: 3px solid #2E6DB4; background: #F8FAFF; border-radius: 0 8px 8px 0; margin-bottom: 10px; }
+.succession-step { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 16px 18px; height: 100%; }
+.succession-step .ss-year  { font-size: 11px; font-weight: 700; color: var(--muted); }
+.succession-step .ss-title { font-size: 14px; font-weight: 700; margin: 4px 0 8px; }
+.succession-step .ss-task  { font-size: 12px; color: var(--text); padding: 3px 0; display: flex; align-items:flex-start; gap: 6px; }
+.succession-step .ss-task::before { content:"•"; color: var(--primary-mid); font-size:14px; line-height:1; flex-shrink:0; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="market-ticker-wrap"><div class="market-ticker"><div class="market-ticker-inner" id="ticker-inner"></div></div></div>
+    <div class="topbar">
+      <span class="topbar-title">家族治理 FMO</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3"><i class="fa-solid fa-circle-user"></i><span>陳○○</span></div>
+    </div>
+    <div class="page-body">
+      <div class="breadcrumb-row">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <span class="sep">/</span><span>家族治理 FMO</span>
+      </div>
+
+      <!-- ══ MANDATE PANEL ══ -->
+      <div class="mandate-panel">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+          <div>
+            <div class="mandate-title"><i class="fa-solid fa-handshake me-2"></i>EAM 委任模式設定</div>
+            <div class="mandate-desc">選擇家族對 EAM 的授權模式。全委模式下 EAM 自主決策並每月自動產出報告；半委模式下重大投資由家族委員會投票決定。</div>
+            <div class="mandate-btn-group">
+              <button class="mandate-btn" id="btn-full" onclick="setMandate('full')">
+                <i class="fa-solid fa-robot me-2"></i>家族全權委託 EAM
+              </button>
+              <button class="mandate-btn" id="btn-semi" onclick="setMandate('semi')">
+                <i class="fa-solid fa-person-circle-check me-2"></i>家族半委託 EAM
+              </button>
+            </div>
+            <div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.1);border-radius:8px;border:1px solid rgba(255,255,255,0.2);font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;">
+              <i class="fa-solid fa-circle-info me-1"></i>
+              <strong>實務說明：</strong>委任模式切換須重新簽署「全權委託投資合約」（依《證券投資信託及顧問法》第 5 條），並向金管會完成備查，<strong>非即時生效</strong>。
+            </div>
+          </div>
+          <div class="text-end">
+            <div class="mandate-status-chip" id="mandate-chip">
+              <div class="dot" id="mandate-dot"></div>
+              <span id="mandate-status-text"></span>
+            </div>
+            <div style="font-size:11px;opacity:0.6;margin-top:6px;" id="auto-report-note"></div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3" style="border-top:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:11px;opacity:0.65;margin-bottom:8px;">IPS 關鍵參數</div>
+          <div class="row g-2">
+            <div class="col-6 col-md-3"><div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px 12px;"><div style="font-size:11px;opacity:0.65;">風險偏好</div><div style="font-size:13px;font-weight:700;">中高風險 (Growth)</div></div></div>
+            <div class="col-6 col-md-3"><div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px 12px;"><div style="font-size:11px;opacity:0.65;">最大股票比例</div><div style="font-size:13px;font-weight:700;">65%</div></div></div>
+            <div class="col-6 col-md-3"><div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px 12px;"><div style="font-size:11px;opacity:0.65;">單一部位上限</div><div style="font-size:13px;font-weight:700;">15%</div></div></div>
+            <div class="col-6 col-md-3"><div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px 12px;"><div style="font-size:11px;opacity:0.65;">最大槓桿比率</div><div style="font-size:13px;font-weight:700;">35%</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 一、權責架構 ══ -->
+      <div class="section-card mb-3">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-sitemap me-1"></i>家族資本治理權責架構</div>
+          <span class="badge-info">Family Office → EAM → 執行層</span>
+        </div>
+        <!-- Level 0 -->
+        <div class="row justify-content-center mb-1">
+          <div class="col-12 col-md-4">
+            <div class="org-node level-0">
+              <div class="role">Tier 0 — 最高治理層</div>
+              <div class="name">陳○○（一代）委託人 / Settlor</div>
+              <div class="duty">家族願景設定・重大決策核准・EAM 授權委任</div>
+            </div>
+          </div>
+        </div>
+        <div class="org-connector"></div>
+        <!-- Level 1 -->
+        <div class="row g-3 mb-1">
+          <div class="col-12 col-md-6">
+            <div class="org-node level-1">
+              <div class="role">Tier 1 — 家族治理</div>
+              <div class="name">治理委員會（全體家族成員）</div>
+              <div class="duty">IPS 審核・年度績效審查・半委模式投票・憲章修訂</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="org-node level-1">
+              <div class="role">Tier 1 — 投資執行</div>
+              <div class="name">External CIO / EAM 團隊</div>
+              <div class="duty">投資決策執行・跨行融資協調・CFC/CRS 合規・月報產出</div>
+            </div>
+          </div>
+        </div>
+        <div class="org-connector"></div>
+        <!-- Level 2 -->
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <div class="org-node level-2">
+              <div class="role">Tier 2 — 接班執行</div>
+              <div class="name">陳○○（長子）接班人</div>
+              <div class="duty">境內投組 B/C 主導・投控股東代表</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="org-node level-2">
+              <div class="role">Tier 2 — 法律顧問</div>
+              <div class="name">外部律師事務所</div>
+              <div class="duty">信託文件維護・爭議調解・憲章見證</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="org-node level-2">
+              <div class="role">Tier 2 — 稅務顧問</div>
+              <div class="name">外部會計師事務所</div>
+              <div class="duty">CFC 申報協助・稅務規劃・申報期限管理</div>
+            </div>
+          </div>
+        </div>
+        <!-- RACI quick summary -->
+        <div class="mt-4 overflow-auto">
+          <table class="data-table" style="font-size:12px;">
+            <thead><tr>
+              <th>決策事項</th><th>委託人</th><th>治理委員會</th><th>EAM</th><th>接班人</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>IPS 修訂</td><td class="text-center badge-ok">核准</td><td class="text-center badge-info">提案/投票</td><td class="text-center badge-warn">建議</td><td class="text-center" style="color:var(--muted);">—</td></tr>
+              <tr><td>境外投組 A 買賣</td><td class="text-center" style="color:var(--muted);">—</td><td class="text-center" style="color:var(--muted);">知會</td><td class="text-center badge-ok">執行</td><td class="text-center" style="color:var(--muted);">—</td></tr>
+              <tr><td>倫巴德融資安排</td><td class="text-center badge-ok">核准</td><td class="text-center badge-info">投票</td><td class="text-center badge-ok">執行</td><td class="text-center" style="color:var(--muted);">—</td></tr>
+              <tr><td>境內投組 B/C 調整</td><td class="text-center badge-warn">知會</td><td class="text-center badge-info">投票</td><td class="text-center badge-warn">建議</td><td class="text-center badge-ok">執行</td></tr>
+              <tr><td>家族憲章修訂</td><td class="text-center badge-ok">核准</td><td class="text-center badge-ok">四分之三同意</td><td class="text-center" style="color:var(--muted);">—</td><td class="text-center" style="color:var(--muted);">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ 二、半委託投票系統 ══ -->
+      <div class="section-card mb-3" id="voting-section">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-vote-yea me-1"></i>半委託模式 — 治理委員會投票</div>
+          <span class="badge-warn" id="pending-vote-count"></span>
+        </div>
+        <div id="full-mandate-notice" style="display:none;" class="p-3 rounded mb-3" style="background:#d4edda;border:1px solid #c3e6cb;">
+          <i class="fa-solid fa-robot me-1" style="color:#155724;"></i>
+          <span style="color:#155724;font-size:13px;">目前為<strong>全權委託模式</strong>，投票功能已停用。EAM 可於 IPS 範圍內自主決策。</span>
+        </div>
+        <div id="vote-cards-container" class="row g-3"></div>
+      </div>
+
+      <!-- ══ 三、家族憲章 ══ -->
+      <div class="section-card mb-3">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-scroll me-1"></i>家族憲章 Family Charter</div>
+          <div class="d-flex gap-2 align-items-center">
+            <span class="badge-info">v2024 第三版</span>
+            <span class="fs-12 text-muted">生效：2024-01-01</span>
+          </div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-md-4">
+            <div style="background:linear-gradient(135deg,#0D2746,#1e3f6e);border-radius:12px;padding:20px;color:#fff;height:100%;">
+              <div style="font-size:28px;margin-bottom:8px;">📜</div>
+              <div style="font-size:16px;font-weight:700;margin-bottom:4px;">陳家族辦公室</div>
+              <div style="font-size:12px;opacity:0.7;margin-bottom:12px;">Family Charter 2024</div>
+              <div style="font-size:11px;opacity:0.6;line-height:1.8;">
+                <div>版本：第三版</div>
+                <div>生效日：2024年1月1日</div>
+                <div>條文數：6 條</div>
+                <div>見證律師：陳○律師事務所</div>
+              </div>
+              <div class="mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.15);">
+                <div style="font-size:11px;opacity:0.65;">下次定期檢視</div>
+                <div style="font-size:14px;font-weight:700;">2027-01-01</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-8">
+            <div id="charter-articles"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 四、繼承規劃 ══ -->
+      <div class="section-card mb-3">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-tree me-1"></i>繼承規劃 Succession Planning</div>
+          <span class="badge-info">目標完成年：2030</span>
+        </div>
+
+        <!-- Succession Steps -->
+        <div class="row g-3 mb-4" id="succession-steps"></div>
+
+        <!-- Asset Distribution Plan -->
+        <div class="row g-3">
+          <div class="col-12 col-lg-6">
+            <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">資產傳承規劃</div>
+            <div class="overflow-auto">
+              <table class="data-table" style="font-size:12px;">
+                <thead><tr><th>資產項目</th><th>傳承對象</th><th>方式</th></tr></thead>
+                <tbody id="succession-assets"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">教育基金 Education Fund</div>
+            <div class="section-card" style="background:#F8FAFF;border:1px solid #C7D8F8;">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div style="width:44px;height:44px;border-radius:10px;background:#EFF4FF;display:flex;align-items:center;justify-content:center;">
+                  <i class="fa-solid fa-graduation-cap" style="color:#2E6DB4;font-size:18px;"></i>
+                </div>
+                <div>
+                  <div class="fw-700">子女教育與接班培訓基金</div>
+                  <div class="fs-12 text-muted">海外就學・財商教育・接班訓練</div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between mb-1">
+                <span class="fs-12">目標金額</span>
+                <span class="fs-12 fw-700">USD 5,000,000</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span class="fs-12">已提撥</span>
+                <span class="fs-12 fw-700 text-up">USD 1,200,000 (24%)</span>
+              </div>
+              <div class="progress-bar-custom">
+                <div class="progress-bar-fill" style="width:24%;background:#2E6DB4;"></div>
+              </div>
+              <div class="mt-3 fs-12 text-muted">年度提撥計畫：每年 USD 380,000，預計 2034 年達標</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 五、EAM 服務進程 ══ -->
+      <div class="section-card">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-flag-checkered me-1"></i>EAM 五階段服務進程</div>
+          <span class="badge-warn">目前：Phase 4</span>
+        </div>
+        <div class="timeline" id="phases-timeline"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+let currentMandate = MOCK.family.mandate || 'semi';
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('家族治理 FMO');
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+
+  // Service phases
+  document.getElementById('phases-timeline').innerHTML = MOCK.servicePhases.map(p =>
+    `<div class="timeline-item ${p.done?'done':''} ${p.active?'active':''}">
+       <div class="timeline-date">${p.phase}</div>
+       <div class="timeline-title">${p.title}</div>
+       <div class="timeline-desc">${p.desc}</div>
+     </div>`).join('');
+
+  // Charter articles
+  document.getElementById('charter-articles').innerHTML = MOCK.familyCharter.articles.map(a => `
+    <div class="charter-article">
+      <div class="fw-700 fs-13" style="color:#0D2746;">${a.no}　${a.title}</div>
+      <div class="fs-12 text-muted mt-1" style="line-height:1.7;">${a.content}</div>
+    </div>`).join('');
+
+  // Succession steps
+  document.getElementById('succession-steps').innerHTML = MOCK.successionPlan.phases.map(p => `
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="succession-step" style="border-top:3px solid ${p.color};">
+        <div style="width:36px;height:36px;border-radius:8px;background:${p.color}20;display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
+          <i class="fa-solid ${p.icon}" style="color:${p.color};font-size:16px;"></i>
+        </div>
+        <div class="ss-year">${p.year}</div>
+        <div class="ss-title" style="color:${p.color};">${p.title}</div>
+        ${p.tasks.map(t => `<div class="ss-task">${t}</div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  // Succession assets
+  document.getElementById('succession-assets').innerHTML = MOCK.successionPlan.assets.map(a => `
+    <tr>
+      <td class="fw-600">${a.item}</td>
+      <td>${a.toWhom}</td>
+      <td><span class="badge-info fs-12">${a.method}</span></td>
+    </tr>`).join('');
+
+  // Mandate
+  updateMandateUI(currentMandate);
+  renderVoteCards();
+});
+
+function renderVoteCards() {
+  const items = MOCK.votingItems;
+  document.getElementById('pending-vote-count').textContent =
+    items.filter(v => v.votes.some(vv => vv.vote === 'pending')).length + ' 項待決議';
+
+  document.getElementById('vote-cards-container').innerHTML = items.map(item => {
+    const total    = item.votes.length;
+    const approved = item.votes.filter(v => v.vote === 'approve').length;
+    const rejected = item.votes.filter(v => v.vote === 'reject').length;
+    const pending  = item.votes.filter(v => v.vote === 'pending').length;
+    const needed   = Math.ceil(total * 2 / 3);
+    const passColor = approved >= needed ? '#28A745' : '#B8960C';
+
+    const memberColors = ['#0D2746','#2E6DB4','#4CA3DD','#7EC8E3'];
+    const voteRows = item.votes.map((v, i) => {
+      const btnHtml = v.vote === 'approve'
+        ? `<span class="vote-btn-approve"><i class="fa-solid fa-check me-1"></i>同意</span>`
+        : v.vote === 'reject'
+        ? `<span class="vote-btn-reject"><i class="fa-solid fa-xmark me-1"></i>反對</span>`
+        : `<span class="vote-btn-pending"><i class="fa-solid fa-clock me-1"></i>待表決</span>`;
+      return `<div class="vote-row">
+        <div class="vote-avatar" style="background:${memberColors[i]}20;color:${memberColors[i]};">${v.member.slice(2,3)}</div>
+        <div class="flex-1">
+          <div class="fs-13 fw-600">${v.member}</div>
+          <div class="fs-11 text-muted">${v.role}${v.time ? ' · ' + v.time : ''}</div>
+        </div>
+        ${btnHtml}
+      </div>`;
+    }).join('');
+
+    return `<div class="col-12 col-lg-6">
+      <div class="vote-card">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <div class="vote-title">${item.title}</div>
+            <div class="fs-12 text-muted mt-1">${portBadge(item.portfolio)} · 截止：${item.deadline}</div>
+          </div>
+          <div class="text-end">
+            <div class="fs-20 fw-700" style="color:${passColor};">${approved}/${total}</div>
+            <div class="fs-11 text-muted">需 ${needed} 票通過</div>
+          </div>
+        </div>
+        <div class="p-2 rounded mb-3" style="background:#F8F9FB;font-size:12px;color:var(--muted);line-height:1.6;">${item.desc}</div>
+        <!-- Progress bar -->
+        <div class="mb-3">
+          <div class="d-flex gap-1" style="height:8px;border-radius:4px;overflow:hidden;">
+            <div style="width:${approved/total*100}%;background:#28A745;"></div>
+            <div style="width:${rejected/total*100}%;background:#DC3545;"></div>
+            <div style="width:${pending/total*100}%;background:#E9ECEF;"></div>
+          </div>
+          <div class="d-flex gap-3 mt-1 fs-11">
+            <span style="color:#28A745;">✓ 同意 ${approved}</span>
+            <span style="color:#DC3545;">✗ 反對 ${rejected}</span>
+            <span style="color:#6B7280;">⏳ 待表決 ${pending}</span>
+          </div>
+        </div>
+        ${voteRows}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setMandate(mode) {
+  currentMandate = mode;
+  MOCK.family.mandate = mode;
+  updateMandateUI(mode);
+}
+
+function updateMandateUI(mode) {
+  const btnFull = document.getElementById('btn-full');
+  const btnSemi = document.getElementById('btn-semi');
+  const chip    = document.getElementById('mandate-chip');
+  const dot     = document.getElementById('mandate-dot');
+  const text    = document.getElementById('mandate-status-text');
+  const note    = document.getElementById('auto-report-note');
+  const votingSection  = document.getElementById('voting-section');
+  const fullNotice     = document.getElementById('full-mandate-notice');
+  const voteCards      = document.getElementById('vote-cards-container');
+
+  btnFull.classList.toggle('active', mode === 'full');
+  btnSemi.classList.toggle('active', mode === 'semi');
+
+  if (mode === 'full') {
+    dot.style.background  = '#4ade80';
+    text.textContent      = '全權委託模式 — EAM 自主決策';
+    note.textContent      = '每月 5 日自動產出三類投組月報';
+    chip.style.background = 'rgba(74,222,128,0.2)';
+    fullNotice.style.display = '';
+    voteCards.style.opacity  = '0.4';
+    voteCards.style.pointerEvents = 'none';
+  } else {
+    dot.style.background  = '#fbbf24';
+    text.textContent      = '半委託模式 — 家族委員會投票';
+    note.textContent      = '重大決策須委員會三分之二同意';
+    chip.style.background = 'rgba(251,191,36,0.2)';
+    fullNotice.style.display = 'none';
+    voteCards.style.opacity  = '1';
+    voteCards.style.pointerEvents = '';
+  }
+}
+</script>
+</body>
+</html>

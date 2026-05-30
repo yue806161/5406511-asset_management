@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>投資組合 — Family Capital Platform</title>
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.port-badge-large {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+}
+.metric-card {
+  background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; text-align: center;
+}
+.metric-card .m-label { font-size: 11px; color: var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+.metric-card .m-value { font-size: 20px; font-weight: 700; margin: 4px 0 2px; }
+.metric-card .m-sub   { font-size: 11px; color: var(--muted); }
+.opp-card {
+  background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 16px 18px;
+}
+.opp-card .opp-stage { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+.opp-card .opp-name  { font-size: 14px; font-weight: 700; margin: 4px 0 6px; color: var(--primary); }
+.opp-card .opp-thesis{ font-size: 12px; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="market-ticker-wrap"><div class="market-ticker"><div class="market-ticker-inner" id="ticker-inner"></div></div></div>
+    <div class="topbar">
+      <span class="topbar-title">投資組合</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3"><i class="fa-solid fa-circle-user"></i><span>陳○○</span></div>
+    </div>
+    <div class="page-body">
+      <div class="breadcrumb-row">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <span class="sep">/</span><span>投資組合</span>
+      </div>
+
+      <!-- Portfolio selector tabs -->
+      <div class="port-tabs">
+        <button class="port-tab active" data-port="A" onclick="switchPort('A',this)">🌐 境外投組 A</button>
+        <button class="port-tab"        data-port="B" onclick="switchPort('B',this)">🇹🇼 境內投組 B</button>
+        <button class="port-tab"        data-port="C" onclick="switchPort('C',this)">💰 融資後資金 C</button>
+        <button class="port-tab"        data-port="SIM" onclick="switchPort('SIM',this)">📊 投資試算</button>
+        <button class="port-tab"        data-port="OPP" onclick="switchPort('OPP',this)">🎯 產業機會</button>
+        <button class="port-tab"        data-port="BUILD" onclick="switchPort('BUILD',this)">⊕ 新建投組</button>
+      </div>
+
+      <!-- ══ PORT A — 境外 ══ -->
+      <div id="port-A">
+        <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+          <span class="port-badge-large" style="background:#0D274620;color:#0D2746;">🌐 境外投組 A — OBU 境外資產</span>
+          <span class="badge-info">基準指標：MSCI World</span>
+          <span class="badge-info">主要幣別：USD</span>
+        </div>
+        <!-- KPIs -->
+        <div class="row g-2 mb-3" id="kpi-A"></div>
+        <!-- Risk Metrics -->
+        <div class="row g-2 mb-3" id="risk-A"></div>
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-lg-7">
+            <div class="section-card h-100">
+              <div class="card-header-row"><div class="card-title">績效曲線 vs MSCI World</div></div>
+              <div style="position:relative;height:210px;"><canvas id="chart-perfA"></canvas></div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="section-card h-100">
+              <div class="card-title mb-2">報酬貢獻歸因</div>
+              <div style="position:relative;height:210px;"><canvas id="chart-attrA"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-lg-5">
+            <div class="section-card h-100">
+              <div class="card-title mb-2">資產配置</div>
+              <div class="d-flex justify-content-center" style="position:relative;height:180px;"><canvas id="chart-allocA"></canvas></div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-7">
+            <div class="section-card h-100">
+              <div class="card-title mb-2">地區配置</div>
+              <div style="position:relative;height:180px;"><canvas id="chart-regionA"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="card-title mb-3">持倉明細（境外投組 A）</div>
+          <div class="overflow-auto">
+            <table class="data-table" id="table-A">
+              <thead><tr><th>名稱</th><th>類型</th><th>地區</th><th>對應銀行</th><th>質押</th>
+                <th class="td-num">市值 (USD)</th><th class="td-num">佔比</th><th class="td-num">YTD</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PORT B — 境內 ══ -->
+      <div id="port-B" style="display:none;">
+        <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+          <span class="port-badge-large" style="background:#2E6DB420;color:#2E6DB4;">🇹🇼 境內投組 B — 台灣境內資產</span>
+          <span class="badge-info">基準指標：加權指數</span>
+          <span class="badge-info">主要幣別：NTD</span>
+        </div>
+        <div class="row g-2 mb-3" id="kpi-B"></div>
+        <div class="row g-2 mb-3" id="risk-B"></div>
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-lg-7">
+            <div class="section-card h-100">
+              <div class="card-header-row"><div class="card-title">績效曲線 vs 加權指數</div></div>
+              <div style="position:relative;height:210px;"><canvas id="chart-perfB"></canvas></div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="section-card h-100">
+              <div class="card-title mb-2">報酬貢獻歸因</div>
+              <div style="position:relative;height:210px;"><canvas id="chart-attrB"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="card-title mb-3">持倉明細（境內投組 B）</div>
+          <div class="overflow-auto">
+            <table class="data-table" id="table-B">
+              <thead><tr><th>名稱</th><th>類型</th><th class="td-num">市值</th><th class="td-num">佔比</th><th class="td-num">YTD</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PORT C — 融資後資金 ══ -->
+      <div id="port-C" style="display:none;">
+        <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+          <span class="port-badge-large" style="background:#B8960C20;color:#B8960C;">💰 融資後資金 C — 倫巴德融資 → 境內台灣產業</span>
+          <span class="badge-gold">境內限制</span>
+          <a href="domestic.html" class="fs-12" style="color:#2E6DB4;">→ 詳細境內投資頁面</a>
+        </div>
+        <div style="background:linear-gradient(135deg,#B8960C,#d4a816);border-radius:12px;padding:14px 18px;color:#fff;margin-bottom:16px;font-size:12px;">
+          <i class="fa-solid fa-lock me-1"></i>
+          <strong>投資限制：</strong>此投組資金源自倫巴德融資，依財管 2.0 及地方資產管理專區規定，僅限投資境內台灣產業。
+        </div>
+        <div class="row g-2 mb-3" id="kpi-C"></div>
+        <div class="row g-2 mb-3" id="risk-C"></div>
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-lg-7">
+            <div class="section-card h-100">
+              <div class="card-header-row"><div class="card-title">績效曲線 vs 加權指數+150bps</div></div>
+              <div style="position:relative;height:210px;"><canvas id="chart-perfC"></canvas></div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="section-card h-100">
+              <div class="card-title mb-2">產業配置</div>
+              <div class="d-flex justify-content-center" style="position:relative;height:210px;"><canvas id="chart-allocC"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="card-title mb-3">持倉明細（融資後資金 C）</div>
+          <div class="overflow-auto">
+            <table class="data-table" id="table-C">
+              <thead><tr><th>名稱</th><th>類型</th><th class="td-num">市值</th><th class="td-num">佔比</th><th class="td-num">YTD</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 投資試算 ══ -->
+      <div id="port-SIM" style="display:none;">
+        <div class="row g-3">
+          <div class="col-12 col-lg-4">
+            <div class="section-card">
+              <div class="card-title mb-3"><i class="fa-solid fa-calculator me-1"></i>台灣股票投資試算</div>
+              <div class="sim-card">
+                <label class="form-label fw-600 fs-13">選擇標的</label>
+                <select class="form-select form-select-sm mb-3" id="sim-stock"></select>
+                <label class="form-label fw-600 fs-13">投資金額 (NTD)</label>
+                <input type="number" class="form-control form-control-sm mb-3" id="sim-amount" value="1000000">
+                <label class="form-label fw-600 fs-13">持有期間（年）</label>
+                <select class="form-select form-select-sm mb-3" id="sim-period">
+                  <option value="1">1 年</option><option value="3" selected>3 年</option>
+                  <option value="5">5 年</option><option value="10">10 年</option>
+                </select>
+                <label class="form-label fw-600 fs-13">預期年化報酬率 (%)</label>
+                <input type="number" class="form-control form-control-sm mb-3" id="sim-rate" value="8" step="0.5">
+                <button class="btn btn-sm w-100" style="background:#0D2746;color:#fff;border-radius:8px;" onclick="runSimulator()">
+                  <i class="fa-solid fa-play me-1"></i>執行試算
+                </button>
+              </div>
+              <div class="sim-result mt-3" id="sim-result" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-8">
+            <div class="section-card mb-3">
+              <div class="card-title mb-2">試算成長曲線</div>
+              <div style="position:relative;height:240px;"><canvas id="chart-sim"></canvas></div>
+            </div>
+            <div class="section-card">
+              <div class="card-title mb-2">台股標的總覽</div>
+              <div class="overflow-auto">
+                <table class="data-table" id="table-sim-stocks">
+                  <thead><tr><th>代號</th><th>名稱</th><th>產業</th><th class="td-num">現價</th><th class="td-num">漲跌</th><th class="td-num">P/E</th><th>市值</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ 產業機會評估 ══ -->
+      <div id="port-OPP" style="display:none;">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span class="fw-700" style="color:#0D2746;">產業投資機會評估</span>
+          <span class="badge-info">EAM 研究報告</span>
+          <span class="fs-12 text-muted">更新：2024-07-15</span>
+        </div>
+        <!-- Opportunity Cards -->
+        <div class="row g-3 mb-3" id="opp-cards"></div>
+        <!-- Comparison matrix -->
+        <div class="section-card">
+          <div class="card-title mb-3"><i class="fa-solid fa-table me-1"></i>機會評估矩陣</div>
+          <div class="overflow-auto">
+            <table class="data-table">
+              <thead><tr>
+                <th>投資機會</th><th>產業</th><th>預期 IRR</th><th>投資期限</th><th>風險等級</th><th>所屬投組</th><th>評估階段</th>
+              </tr></thead>
+              <tbody id="opp-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Bubble chart area -->
+        <div class="section-card mt-3">
+          <div class="card-title mb-2">風險 vs 報酬 矩陣圖</div>
+          <div style="position:relative;height:280px;"><canvas id="chart-opp-bubble"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ══ 新建投組 ══ -->
+      <div id="port-BUILD" style="display:none;">
+        <div class="row g-3">
+          <div class="col-12 col-lg-5">
+            <div class="section-card">
+              <div class="card-title mb-3"><i class="fa-solid fa-plus me-1"></i>新建投資組合</div>
+              <div class="sim-card">
+                <label class="form-label fw-600 fs-13">投組名稱</label>
+                <input type="text" class="form-control form-control-sm mb-3" id="build-name" placeholder="例：境外成長型 2024">
+                <label class="form-label fw-600 fs-13">投組類別</label>
+                <select class="form-select form-select-sm mb-3" id="build-type">
+                  <option value="A">境外投組 A（OBU 境外資產）</option>
+                  <option value="B">境內投組 B（境內台灣資產）</option>
+                  <option value="C">融資後資金 C（限台灣產業）</option>
+                </select>
+                <label class="form-label fw-600 fs-13">初始金額 (USD)</label>
+                <input type="number" class="form-control form-control-sm mb-3" id="build-amount" value="5000000">
+                <label class="form-label fw-600 fs-13">風險偏好</label>
+                <select class="form-select form-select-sm mb-3" id="build-risk">
+                  <option>成長型 (Growth)</option>
+                  <option>平衡型 (Balanced)</option>
+                  <option>保守型 (Conservative)</option>
+                </select>
+                <label class="form-label fw-600 fs-13">基準指標</label>
+                <select class="form-select form-select-sm mb-3" id="build-benchmark">
+                  <option>MSCI World</option><option>S&amp;P 500</option>
+                  <option>加權指數</option><option>自定義</option>
+                </select>
+                <button class="btn btn-sm w-100" style="background:#0D2746;color:#fff;border-radius:8px;" onclick="createPortfolio()">
+                  <i class="fa-solid fa-check me-1"></i>建立投組
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-7">
+            <div class="section-card">
+              <div class="card-title mb-3">目標配置設定</div>
+              <div id="build-alloc-sliders"></div>
+              <div class="mt-3 p-3 rounded" style="background:#F3F5F8;">
+                <div class="card-title mb-2 fs-12">配置預覽</div>
+                <div style="position:relative;height:180px;"><canvas id="chart-build"></canvas></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+let simChart = null, buildChart = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('投資組合');
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+
+  // ── PORT A ──
+  renderPortKPI('A', MOCK.holdingsA, MOCK.aum.portA.value, '#0D2746', MOCK.portfolioYTD.monthlyData.at(-1).portA);
+  renderRiskMetrics('A', MOCK.riskMetrics.portA, '#0D2746');
+  renderHoldings('table-A', MOCK.holdingsA, true);
+  renderPerfChart('chart-perfA', 'portA', '#0D2746');
+  renderAttrChart('chart-attrA', MOCK.attribution.portA, '#0D2746');
+  renderAllocChart('chart-allocA', MOCK.holdingsA, '#0D2746');
+  renderRegionChart();
+
+  // ── PORT B ──
+  renderPortKPI('B', MOCK.holdingsB, MOCK.aum.portB.value, '#2E6DB4', MOCK.portfolioYTD.monthlyData.at(-1).portB);
+  renderRiskMetrics('B', MOCK.riskMetrics.portB, '#2E6DB4');
+  renderHoldings('table-B', MOCK.holdingsB, false);
+  renderPerfChart('chart-perfB', 'portB', '#2E6DB4');
+  renderAttrChart('chart-attrB', MOCK.attribution.portB, '#2E6DB4');
+
+  // ── PORT C ──
+  renderPortKPI('C', MOCK.holdingsC, MOCK.aum.portC.value, '#B8960C', MOCK.portfolioYTD.monthlyData.at(-1).portC);
+  renderRiskMetrics('C', MOCK.riskMetrics.portC, '#B8960C');
+  renderHoldings('table-C', MOCK.holdingsC, false);
+  renderPerfChart('chart-perfC', 'portC', '#B8960C');
+  renderAllocCChart();
+
+  // ── Simulator ──
+  MOCK.taiwanStocks.forEach(s => {
+    const opt = new Option(`${s.code} — ${s.name}`, s.code);
+    document.getElementById('sim-stock').appendChild(opt);
+  });
+  document.querySelector('#table-sim-stocks tbody').innerHTML = MOCK.taiwanStocks.map(s =>
+    `<tr><td class="fw-600">${s.code}</td><td>${s.name}</td><td>${s.sector}</td>
+     <td class="td-num">NT$${fmt(s.price)}</td>
+     <td class="td-num ${changeClass(s.change)}">${changeIcon(s.change)} ${Math.abs(s.change).toFixed(2)}%</td>
+     <td class="td-num">${s.pe||'N/A'}</td><td>${s.mktCap}</td></tr>`).join('');
+
+  // ── Opportunity cards ──
+  document.getElementById('opp-cards').innerHTML = MOCK.industryOpportunities.map(o => {
+    const stageColors = { '高度關注':'#DC3545','盡職調查':'#B8960C','觀察中':'#2E6DB4','初步接觸':'#6B7280' };
+    const riskColors  = { '高':'#DC3545','中高':'#B8960C','中':'#28A745' };
+    return `<div class="col-12 col-md-6 col-xl-3">
+      <div class="opp-card" style="border-top:3px solid ${o.color};">
+        <div class="opp-stage" style="color:${stageColors[o.stage]||'#6B7280'};">● ${o.stage.toUpperCase()}</div>
+        <div class="opp-name">${o.name}</div>
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <span class="badge-info fs-12">${o.sector}</span>
+          <span class="badge-gold fs-12">IRR ${o.irr}</span>
+          <span style="background:${riskColors[o.risk]||'#ccc'}20;color:${riskColors[o.risk]};font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600;">風險 ${o.risk}</span>
+        </div>
+        <div class="opp-thesis">${o.thesis}</div>
+        <div class="mt-2 fs-11 text-muted">投資期限：${o.horizon}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('opp-table-body').innerHTML = MOCK.industryOpportunities.map(o =>
+    `<tr>
+      <td class="fw-600">${o.name}</td><td>${o.sector}</td>
+      <td class="text-up fw-600">${o.irr}</td><td>${o.horizon}</td>
+      <td style="color:${o.risk==='高'?'#DC3545':o.risk==='中高'?'#B8960C':'#28A745'};font-weight:600;">${o.risk}</td>
+      <td><span class="badge-port-c">投組 C</span></td>
+      <td><span class="badge-info">${o.stage}</span></td>
+    </tr>`).join('');
+
+  // Bubble chart
+  const riskMap = { '高':4, '中高':3, '中':2, '低':1 };
+  new Chart(document.getElementById('chart-opp-bubble').getContext('2d'), {
+    type: 'bubble',
+    data: {
+      datasets: MOCK.industryOpportunities.map((o, i) => ({
+        label: o.name,
+        data: [{ x: riskMap[o.risk]||2, y: parseFloat(o.irr.split('–')[1]||o.irr), r: 14 + i*3 }],
+        backgroundColor: o.color + '80', borderColor: o.color, borderWidth: 2
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { boxWidth: 10, font: { size: 11 } } } },
+      scales: {
+        x: { title: { display: true, text: '風險等級 (1低→4高)' }, min: 0, max: 5, grid: { color: '#F3F5F8' } },
+        y: { title: { display: true, text: '預期最大 IRR (%)' }, grid: { color: '#F3F5F8' } }
+      }
+    }
+  });
+
+  // Builder sliders
+  const allocItems = ['股票','債券','私募股權','不動產','現金'];
+  const initVals   = [40, 30, 15, 10, 5];
+  const palette    = ['#0D2746','#2E6DB4','#4CA3DD','#7EC8E3','#BFE4F0'];
+  document.getElementById('build-alloc-sliders').innerHTML = allocItems.map((a, i) => `
+    <div class="mb-3">
+      <div class="d-flex justify-content-between mb-1">
+        <span class="fs-13 fw-600">${a}</span>
+        <span class="fs-13 fw-600" id="bval-${i}">${initVals[i]}%</span>
+      </div>
+      <input type="range" class="form-range" min="0" max="80" value="${initVals[i]}"
+        oninput="updateBuildChart(${i}, this.value)">`).join('');
+  buildChart = new Chart(document.getElementById('chart-build').getContext('2d'), {
+    type: 'doughnut',
+    data: { labels: allocItems, datasets: [{ data: [...initVals], backgroundColor: palette, borderWidth:2, borderColor:'#fff' }] },
+    options: { cutout:'55%', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right' } } }
+  });
+});
+
+function renderPortKPI(port, holdings, aum, color, ytd) {
+  const avgYTD = (holdings.reduce((s,h)=>s+h.change,0)/holdings.length).toFixed(2);
+  document.getElementById('kpi-' + port).innerHTML = [
+    { label:'投組總值',   value: fmtUSD(aum),            sub: '' },
+    { label:'YTD 表現',   value: fmtPct(ytd),             sub: `vs 基準`, cls: changeClass(ytd) },
+    { label:'持倉數量',   value: holdings.length + ' 筆', sub: '' },
+    { label:'平均持倉YTD',value: fmtPct(parseFloat(avgYTD)), sub:'', cls: changeClass(parseFloat(avgYTD)) }
+  ].map(k => `<div class="col-6 col-md-3"><div class="metric-card">
+    <div class="m-label">${k.label}</div>
+    <div class="m-value ${k.cls||''}" style="color:${color};">${k.value}</div>
+    <div class="m-sub">${k.sub}</div>
+  </div></div>`).join('');
+}
+
+function renderRiskMetrics(port, rm, color) {
+  const metrics = [
+    { label:'年化波動率', value: rm.volatility + '%', warn: rm.volatility > 20 },
+    { label:'夏普比率',   value: rm.sharpe.toFixed(2), warn: rm.sharpe < 1 },
+    { label:'最大回撤',   value: rm.maxDrawdown + '%', warn: rm.maxDrawdown < -10 },
+    { label:'VaR (95%)', value: rm.var95 + '%', warn: false },
+    { label:'Beta',       value: rm.beta.toFixed(2), warn: rm.beta > 1.1 },
+    { label:'Alpha',      value: fmtPct(rm.alpha), warn: rm.alpha < 0 }
+  ];
+  document.getElementById('risk-' + port).innerHTML = metrics.map(m =>
+    `<div class="col-6 col-sm-4 col-xl-2"><div class="metric-card" style="border-bottom:2px solid ${m.warn?'#DC3545':color}30;">
+      <div class="m-label">${m.label}</div>
+      <div class="m-value" style="font-size:16px;color:${m.warn?'#DC3545':color};">${m.value}</div>
+    </div></div>`).join('');
+}
+
+function renderHoldings(tableId, holdings, showPledge) {
+  document.querySelector('#' + tableId + ' tbody').innerHTML = holdings.map(h =>
+    `<tr>
+      <td class="fw-600">${h.name}${showPledge&&h.pledged?'<span class="badge-pledged ms-1">🔒</span>':''}</td>
+      <td>${h.type}</td>
+      <td>${h.region}</td>
+      ${showPledge ? `<td>${h.bank||'—'}銀行</td><td>${h.pledged?'<span class="badge-pledged">質押</span>':'<span class="badge-free">自由</span>'}</td>` : ''}
+      <td class="td-num">${fmtUSD(h.value)}</td>
+      <td class="td-num">${h.pct}%</td>
+      <td class="td-num ${changeClass(h.change)}">${changeIcon(h.change)} ${Math.abs(h.change).toFixed(1)}%</td>
+    </tr>`).join('');
+}
+
+function renderPerfChart(canvasId, portKey, color) {
+  const md = MOCK.portfolioYTD.monthlyData;
+  new Chart(document.getElementById(canvasId).getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: md.map(m => m.month),
+      datasets: [
+        { label:'投組績效', data: md.map(m => m[portKey]), borderColor: color, backgroundColor: color+'18', tension:.4, fill:true, borderWidth:2, pointRadius:4 },
+        { label:'基準',     data: md.map(m => m.benchmark), borderColor:'#DEE2E6', borderDash:[4,4], tension:.3, pointRadius:0, borderWidth:1.5, fill:false }
+      ]
+    },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:8 } } },
+      scales:{ y:{ ticks:{ callback:v=>v+'%' }, grid:{ color:'#F3F5F8' } }, x:{ grid:{ display:false } } }
+    }
+  });
+}
+
+function renderAttrChart(canvasId, data, color) {
+  const colors = data.map(d => d.contribution >= 0 ? color : '#DC3545');
+  new Chart(document.getElementById(canvasId).getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.factor),
+      datasets: [{ label:'貢獻度 (%)', data: data.map(d => d.contribution),
+        backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: { indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ x:{ ticks:{ callback:v=>v+'%' }, grid:{ color:'#F3F5F8' } }, y:{ grid:{ display:false } } }
+    }
+  });
+}
+
+function renderAllocChart(canvasId, holdings, color) {
+  const typeMap = {};
+  holdings.forEach(h => { typeMap[h.type] = (typeMap[h.type]||0) + h.pct; });
+  const labels = Object.keys(typeMap);
+  const palette = ['#0D2746','#2E6DB4','#4CA3DD','#7EC8E3','#BFE4F0'];
+  new Chart(document.getElementById(canvasId).getContext('2d'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: labels.map(l=>typeMap[l]), backgroundColor:palette.slice(0,labels.length), borderWidth:2, borderColor:'#fff' }] },
+    options: { cutout:'60%', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:8 } } } }
+  });
+}
+
+function renderAllocCChart() {
+  const s = MOCK.domestic.sectors;
+  new Chart(document.getElementById('chart-allocC').getContext('2d'), {
+    type: 'doughnut',
+    data: { labels:s.map(x=>x.name), datasets:[{ data:s.map(x=>x.pct), backgroundColor:s.map(x=>x.color), borderWidth:2, borderColor:'#fff' }] },
+    options: { cutout:'60%', responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:8 } } } }
+  });
+}
+
+function renderRegionChart() {
+  const regionMap = {};
+  MOCK.holdingsA.forEach(h => { regionMap[h.region] = (regionMap[h.region]||0) + h.value; });
+  const labels = Object.keys(regionMap);
+  const palette = ['#0D2746','#2E6DB4','#4CA3DD','#7EC8E3','#BFE4F0'];
+  new Chart(document.getElementById('chart-regionA').getContext('2d'), {
+    type: 'bar',
+    data: { labels, datasets:[{ label:'市值 (USD)', data:labels.map(l=>regionMap[l]), backgroundColor:palette.slice(0,labels.length), borderRadius:6 }] },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ ticks:{ callback:v=>'$'+(v/1e6).toFixed(0)+'M' }, grid:{ color:'#F3F5F8' } }, x:{ grid:{ display:false } } }
+    }
+  });
+}
+
+function runSimulator() {
+  const amount = parseFloat(document.getElementById('sim-amount').value)||1000000;
+  const period = parseInt(document.getElementById('sim-period').value);
+  const rate   = parseFloat(document.getElementById('sim-rate').value)/100;
+  const code   = document.getElementById('sim-stock').value;
+  const final  = amount * Math.pow(1+rate, period);
+  const profit = final - amount;
+  document.getElementById('sim-result').style.display = '';
+  document.getElementById('sim-result').innerHTML = `
+    <div class="row g-2">
+      <div class="col-6"><div class="res-label">期末估值</div><div class="res-value">NT$${fmt(Math.round(final))}</div></div>
+      <div class="col-6"><div class="res-label">預期獲利</div><div class="res-value text-up">+NT$${fmt(Math.round(profit))}</div></div>
+      <div class="col-6"><div class="res-label">年化報酬</div><div class="res-value">${fmtPct(rate*100,1)}</div></div>
+      <div class="col-6"><div class="res-label">標的</div><div class="res-value" style="font-size:14px;">${code||'N/A'}</div></div>
+    </div>`;
+  const years  = Array.from({length:period+1},(_,i)=>i===0?'初始':`第${i}年`);
+  const values = years.map((_,i)=>Math.round(amount*Math.pow(1+rate,i)));
+  if (simChart) simChart.destroy();
+  simChart = new Chart(document.getElementById('chart-sim').getContext('2d'), {
+    type:'line', data:{ labels:years, datasets:[{ label:'估值成長', data:values, borderColor:'#0D2746', backgroundColor:'rgba(13,39,70,0.08)', tension:.3, fill:true, borderWidth:2, pointRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
+      scales:{ y:{ ticks:{ callback:v=>'NT$'+(v/1e6).toFixed(1)+'M' }, grid:{ color:'#F3F5F8' } }, x:{ grid:{ display:false } } } }
+  });
+}
+
+function updateBuildChart(i, val) {
+  document.getElementById('bval-'+i).textContent = val+'%';
+  buildChart.data.datasets[0].data[i] = parseInt(val);
+  buildChart.update();
+}
+
+function createPortfolio() {
+  const name = document.getElementById('build-name').value||'新投組';
+  const type = document.getElementById('build-type').value;
+  const amt  = document.getElementById('build-amount').value;
+  alert(`✅ 投組「${name}」已建立\n類別：${type}\n初始金額：USD ${parseInt(amt).toLocaleString()}\n（模擬：已送 EAM 審核）`);
+}
+
+function switchPort(port, btn) {
+  document.querySelectorAll('.port-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['A','B','C','SIM','OPP','BUILD'].forEach(p => {
+    const el = document.getElementById('port-'+p);
+    if (el) el.style.display = p===port?'':'none';
+  });
+}
+</script>
+</body>
+</html>

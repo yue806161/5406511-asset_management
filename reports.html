@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>報告中心 — Family Capital Platform</title>
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="market-ticker-wrap"><div class="market-ticker"><div class="market-ticker-inner" id="ticker-inner"></div></div></div>
+    <div class="topbar">
+      <span class="topbar-title">報告中心</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3"><i class="fa-solid fa-circle-user"></i><span>陳○○</span></div>
+    </div>
+    <div class="page-body">
+      <div class="breadcrumb-row">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <span class="sep">/</span><span>報告中心</span>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="section-card mb-3">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <select class="form-select form-select-sm" style="max-width:120px;" id="filter-year" onchange="filterReports()">
+            <option value="">全部年份</option>
+            <option value="2024" selected>2024</option>
+          </select>
+          <select class="form-select form-select-sm" style="max-width:120px;" id="filter-type" onchange="filterReports()">
+            <option value="">全部類型</option>
+            <option value="季報">季報</option>
+            <option value="月報">月報</option>
+            <option value="合併">合併報告</option>
+            <option value="稅務">稅務報告</option>
+            <option value="治理">治理報告</option>
+            <option value="風控">風控報告</option>
+          </select>
+          <select class="form-select form-select-sm" style="max-width:140px;" id="filter-port" onchange="filterReports()">
+            <option value="">全部投組</option>
+            <option value="A">境外投組 A</option>
+            <option value="B">境內投組 B</option>
+            <option value="C">融資後資金 C</option>
+          </select>
+          <button class="btn btn-sm" style="background:#0D2746;color:#fff;border-radius:8px;" onclick="resetFilters()">
+            <i class="fa-solid fa-rotate-left me-1"></i>重設
+          </button>
+        </div>
+      </div>
+
+      <!-- Report cards -->
+      <div class="row g-3" id="reports-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+const typeIcons = {
+  '季報': 'fa-chart-line',
+  '月報': 'fa-calendar-days',
+  '合併': 'fa-layer-group',
+  '稅務': 'fa-scale-balanced',
+  '治理': 'fa-users',
+  '風控': 'fa-shield-halved'
+};
+const typeColors = {
+  '季報': '#0D2746',
+  '月報': '#2E6DB4',
+  '合併': '#4CA3DD',
+  '稅務': '#B8960C',
+  '治理': '#28A745',
+  '風控': '#DC3545'
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('報告中心');
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+  renderReports(MOCK.reports);
+});
+
+function renderReports(reports) {
+  document.getElementById('reports-grid').innerHTML = reports.map(r => {
+    const icon  = typeIcons[r.type] || 'fa-file-lines';
+    const color = typeColors[r.type] || '#6B7280';
+    const portBadgeHtml = r.portfolio ? portBadge(r.portfolio) : '';
+    return `
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="section-card" style="border-top:3px solid ${color};">
+          <div class="d-flex align-items-start gap-3">
+            <div style="width:44px;height:44px;border-radius:10px;background:${color}20;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="fa-solid ${icon}" style="color:${color};font-size:18px;"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="fw-700 fs-13 mb-1" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.name}</div>
+              <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                <span class="badge-info fs-12">${r.type}</span>
+                ${portBadgeHtml}
+              </div>
+              <div class="fs-12 text-muted mb-2"><i class="fa-solid fa-calendar me-1"></i>${r.date}</div>
+              ${r.status === 'available'
+                ? `<button class="btn btn-sm w-100" style="background:#0D2746;color:#fff;border-radius:7px;" onclick="downloadReport('${r.id}')">
+                     <i class="fa-solid fa-download me-1"></i>下載報告
+                   </button>`
+                : `<button class="btn btn-sm w-100 btn-outline-secondary" style="border-radius:7px;" disabled>
+                     <i class="fa-solid fa-clock me-1"></i>尚未產出
+                   </button>`
+              }
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterReports() {
+  const year = document.getElementById('filter-year').value;
+  const type = document.getElementById('filter-type').value;
+  const port = document.getElementById('filter-port').value;
+  const filtered = MOCK.reports.filter(r => {
+    if (year && !r.date.startsWith(year)) return false;
+    if (type && r.type !== type) return false;
+    if (port && r.portfolio !== port) return false;
+    return true;
+  });
+  renderReports(filtered);
+}
+
+function resetFilters() {
+  document.getElementById('filter-year').value = '';
+  document.getElementById('filter-type').value = '';
+  document.getElementById('filter-port').value = '';
+  renderReports(MOCK.reports);
+}
+
+function downloadReport(id) {
+  const r = MOCK.reports.find(r => r.id === id);
+  alert(`📥 下載報告：${r.name}\n（模擬：實際系統將從文件庫下載 PDF）`);
+}
+</script>
+</body>
+</html>

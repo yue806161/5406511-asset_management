@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>稅務與合規管理 — Family Capital Platform</title>
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+.cfc-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 16px 18px;
+  height: 100%;
+}
+.cfc-card .flag { font-size: 22px; margin-bottom: 6px; }
+.cfc-card .entity-name { font-size: 13px; font-weight: 700; color: var(--primary); }
+.cfc-card .entity-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.calendar-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 10px 14px; border-bottom: 1px solid #F3F5F8;
+}
+.calendar-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+}
+.sim-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.sim-input-row label { font-size: 12px; font-weight: 600; color: var(--text); min-width: 120px; }
+.sim-input-row input, .sim-input-row select { font-size: 13px; }
+.tax-result-card {
+  border-radius: 10px; padding: 14px 16px; text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="market-ticker-wrap"><div class="market-ticker"><div class="market-ticker-inner" id="ticker-inner"></div></div></div>
+    <div class="topbar">
+      <span class="topbar-title">稅務與合規管理</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3"><i class="fa-solid fa-circle-user"></i><span>陳○○</span></div>
+    </div>
+    <div class="page-body">
+      <div class="breadcrumb-row">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <span class="sep">/</span><span>稅務與合規管理</span>
+      </div>
+
+      <!-- Reg bar -->
+      <div class="reg-bar">
+        <span class="reg-label"><i class="fa-solid fa-scale-balanced me-1"></i>主要法規依據</span>
+        <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>所得基本稅額條例 § 12-1（CFC）</span>
+        <span class="reg-tag"><i class="fa-solid fa-globe"></i>CRS OECD 共同申報準則</span>
+        <span class="reg-tag"><i class="fa-solid fa-globe"></i>FATCA（美國 HIRE Act）</span>
+        <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>遺產及贈與稅法 § 3</span>
+        <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>所得稅法 § 14-1（海外所得）</span>
+      </div>
+
+      <!-- ── 合規總覽 KPIs ── -->
+      <div class="kpi-grid mb-3" id="compliance-kpis"></div>
+
+      <!-- ── CFC 監控儀表板 ── -->
+      <div class="section-card mb-3">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-building me-1"></i>CFC 受控外國公司監控</div>
+          <span class="badge-info">CFC 規定：持股 ≥ 50% + 低稅負地區</span>
+        </div>
+        <div class="mb-3 p-3 rounded" style="background:#e8f4f8;border:1px solid #b8daed;font-size:12px;color:#1a4a6b;line-height:1.7;">
+          <strong>CFC 制度重點：</strong>個人對境外低稅負地區公司（有效稅率 ≤ 14%）持股 ≥ 50%，須將 CFC 當年度<strong>盈餘依持股比例</strong>計入最低稅負所得額（稅率 20%）。
+          海外所得 ≤ NTD 100 萬元可免計入。
+        </div>
+        <div class="row g-3 mb-3" id="cfc-cards"></div>
+        <!-- CFC Summary table -->
+        <div class="overflow-auto">
+          <table class="data-table">
+            <thead><tr>
+              <th>實體</th><th>所在地</th><th>持股</th>
+              <th class="td-num">年度盈餘</th><th>有效稅率</th>
+              <th class="td-num">應計入最低稅負</th><th>申報狀態</th>
+            </tr></thead>
+            <tbody id="cfc-table-body"></tbody>
+          </table>
+        </div>
+        <div class="mt-3 p-3 rounded" style="background:#F8F9FB;border:1px solid var(--border);">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <div class="fs-12 fw-700">CFC 彙總應申報最低稅負所得</div>
+              <div id="cfc-total" class="fs-20 fw-700 mt-1" style="color:#0D2746;"></div>
+            </div>
+            <div>
+              <div class="fs-12 fw-700">估計最低稅負（20%）</div>
+              <div id="cfc-tax" class="fs-20 fw-700 mt-1" style="color:#DC3545;"></div>
+            </div>
+            <div>
+              <div class="fs-12 fw-700">海外所得免稅額</div>
+              <div class="fs-20 fw-700 mt-1" style="color:#28A745;">NTD 100萬</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CRS/FATCA ── -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-7">
+          <div class="section-card h-100">
+            <div class="card-header-row mb-3">
+              <div class="card-title"><i class="fa-solid fa-calendar-check me-1"></i>申報期限行事曆</div>
+            </div>
+            <div id="tax-calendar"></div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-5">
+          <div class="section-card h-100">
+            <div class="card-title mb-3"><i class="fa-solid fa-globe me-1"></i>CRS 自動交換國家清單</div>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <span class="badge-info">台灣</span><span class="badge-info">英屬維京群島 BVI</span>
+              <span class="badge-info">開曼群島</span><span class="badge-info">新加坡</span>
+              <span class="badge-info">香港</span><span class="badge-info">盧森堡</span>
+              <span class="badge-info">美國（FATCA）</span>
+            </div>
+            <div class="section-title" style="font-size:11px;">合規狀態</div>
+            <div id="compliance-cards" class="d-flex flex-column gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 稅務模擬器 ── -->
+      <div class="section-card mb-3">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-calculator me-1"></i>稅務模擬與申報協助</div>
+          <span class="badge-info">三類投組稅負比較</span>
+        </div>
+        <div class="row g-4">
+          <!-- Input -->
+          <div class="col-12 col-lg-4">
+            <div style="background:#F8F9FB;border-radius:10px;padding:18px 20px;">
+              <div class="fw-700 fs-13 mb-3">輸入試算參數</div>
+              <div class="sim-input-row">
+                <label>境外所得（CFC）</label>
+                <input type="number" class="form-control form-control-sm" id="sim-cfc" value="3200000" placeholder="NTD">
+              </div>
+              <div class="sim-input-row">
+                <label>境內股利所得</label>
+                <input type="number" class="form-control form-control-sm" id="sim-div" value="1500000" placeholder="NTD">
+              </div>
+              <div class="sim-input-row">
+                <label>倫巴德利息費用</label>
+                <input type="number" class="form-control form-control-sm" id="sim-interest" value="600000" placeholder="NTD（可扣除）">
+              </div>
+              <div class="sim-input-row">
+                <label>其他綜合所得</label>
+                <input type="number" class="form-control form-control-sm" id="sim-other" value="800000" placeholder="NTD">
+              </div>
+              <div class="sim-input-row">
+                <label>股利課稅方式</label>
+                <select class="form-select form-select-sm" id="sim-div-method">
+                  <option value="separate">分離課稅 28%</option>
+                  <option value="combined">合併計稅</option>
+                </select>
+              </div>
+              <button class="btn btn-sm w-100 mt-2" style="background:#0D2746;color:#fff;border-radius:8px;" onclick="runTaxSimulator()">
+                <i class="fa-solid fa-calculator me-1"></i>執行稅務試算
+              </button>
+            </div>
+          </div>
+          <!-- Result -->
+          <div class="col-12 col-lg-8">
+            <div id="tax-sim-result" class="row g-3">
+              <div class="col-12">
+                <div class="p-4 text-center text-muted" style="background:#F8F9FB;border-radius:10px;">
+                  <i class="fa-solid fa-calculator fa-2x mb-2 opacity-25"></i>
+                  <div class="fs-13">請輸入參數後點擊「執行稅務試算」</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 三投組稅務對比表 ── -->
+      <div class="section-card">
+        <div class="card-header-row mb-3">
+          <div class="card-title"><i class="fa-solid fa-table-columns me-1"></i>三類投組稅務對比表</div>
+          <div class="d-flex gap-2"><span class="badge-port-a">境外 A</span><span class="badge-port-b">境內 B</span><span class="badge-port-c">融資後 C</span></div>
+        </div>
+        <div class="reg-bar">
+          <span class="reg-label"><i class="fa-solid fa-scale-balanced me-1"></i>對比框架依據</span>
+          <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>所得基本稅額條例（最低稅負）</span>
+          <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>所得稅法（股利 28% 分離課稅）</span>
+          <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>財管2.0 OBU 免稅優惠</span>
+          <span class="reg-tag"><i class="fa-solid fa-flag"></i>地方資產管理專區試辦優惠</span>
+        </div>
+        <div class="mb-3 p-3 rounded" style="background:#fff8e1;border:1px solid #ffe082;font-size:12px;color:#5d4037;">
+          <i class="fa-solid fa-triangle-exclamation me-1"></i>以下為一般性稅務整理，非正式法律意見。實際稅務處理應以台灣稅法規定及專業稅務顧問意見為準。
+        </div>
+        <div class="overflow-auto">
+          <table class="data-table tax-compare-table">
+            <thead><tr>
+              <th style="min-width:140px;">稅務項目</th>
+              <th style="min-width:200px;"><span class="badge-port-a">境外投組 A</span><br><span class="fs-11 text-muted">OBU 境外資產</span></th>
+              <th style="min-width:200px;"><span class="badge-port-b">境內投組 B</span><br><span class="fs-11 text-muted">境內台灣資產</span></th>
+              <th style="min-width:200px;"><span class="badge-port-c">融資後資金 C</span><br><span class="fs-11 text-muted">倫巴德融資後台灣投資</span></th>
+            </tr></thead>
+            <tbody id="tax-compare-body"></tbody>
+          </table>
+        </div>
+        <div class="mt-4">
+          <div class="section-title" style="font-size:11px;">預估有效綜合稅率（試算）</div>
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <div class="stat-card text-center">
+                <div class="card-label">境外投組 A</div>
+                <div class="card-value" style="font-size:28px;color:#0D2746;">8.5%</div>
+                <div class="fs-11 text-muted mt-1">最低稅負 20% × CFC 盈餘佔比</div>
+                <div class="progress-bar-custom mt-2"><div class="progress-bar-fill" style="width:25.5%;background:#0D2746;"></div></div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="stat-card text-center">
+                <div class="card-label">境內投組 B</div>
+                <div class="card-value" style="font-size:28px;color:#2E6DB4;">22.0%</div>
+                <div class="fs-11 text-muted mt-1">股利 28% 分離 + 資本利得暫停課稅</div>
+                <div class="progress-bar-custom mt-2"><div class="progress-bar-fill" style="width:66%;background:#2E6DB4;"></div></div>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="stat-card text-center">
+                <div class="card-label">融資後資金 C</div>
+                <div class="card-value" style="font-size:28px;color:#B8960C;">18.5%</div>
+                <div class="fs-11 text-muted mt-1">B 稅率 − 倫巴德利息扣除效果</div>
+                <div class="progress-bar-custom mt-2"><div class="progress-bar-fill" style="width:55.5%;background:#B8960C;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('稅務與合規管理');
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+
+  // KPIs
+  document.getElementById('compliance-kpis').innerHTML = [
+    { label: 'CFC 實體數',      value: MOCK.cfcEntities.length + ' 家', icon: 'fa-building', color:'#0D2746' },
+    { label: '已申報 CFC',      value: MOCK.cfcEntities.filter(e=>e.status==='已申報').length + '/' + MOCK.cfcEntities.length, icon: 'fa-circle-check', color:'#28A745' },
+    { label: 'CRS 交換國家',    value: '7 國', icon: 'fa-globe', color:'#2E6DB4' },
+    { label: '稅務預警事項',    value: '1 項', icon: 'fa-triangle-exclamation', color:'#DC3545' },
+    { label: '最低稅負估計',    value: 'NTD 1.24M', icon: 'fa-file-invoice-dollar', color:'#B8960C' }
+  ].map(k => `<div class="stat-card">
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <i class="fa-solid ${k.icon}" style="color:${k.color};font-size:15px;"></i>
+      <span class="card-label mb-0">${k.label}</span>
+    </div>
+    <div class="card-value" style="font-size:20px;">${k.value}</div>
+  </div>`).join('');
+
+  // CFC cards
+  const jurisdictionFlags = { 'BVI':'🇻🇬', '開曼群島':'🇰🇾', '新加坡':'🇸🇬', '香港':'🇭🇰' };
+  document.getElementById('cfc-cards').innerHTML = MOCK.cfcEntities.map(e => {
+    const taxRateNum = parseFloat(e.taxRate);
+    const isCFC = taxRateNum <= 14;
+    const statusBadge = e.status === '已申報' ? 'badge-ok' : e.status === '申報中' ? 'badge-warn' : 'badge-warning';
+    return `<div class="col-12 col-sm-6 col-lg-3">
+      <div class="cfc-card" style="border-top:3px solid ${isCFC?'#DC3545':'#28A745'};">
+        <div class="flag">${jurisdictionFlags[e.jurisdiction] || '🌐'}</div>
+        <div class="entity-name">${e.name}</div>
+        <div class="entity-meta">${e.jurisdiction} · 持股 ${e.holding}%</div>
+        <hr style="margin:10px 0;border-color:#F3F5F8;">
+        <div class="d-flex justify-content-between mb-1">
+          <span class="fs-12 text-muted">年度盈餘</span>
+          <span class="fs-12 fw-700">${fmtUSD(e.revenue)}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="fs-12 text-muted">有效稅率</span>
+          <span class="fs-12 fw-700" style="color:${isCFC?'#DC3545':'#28A745'};">${e.taxRate} ${isCFC?'⚠️ CFC':''}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="${statusBadge}">${e.status}</span>
+          ${isCFC?`<span class="fs-11 text-muted">計入最低稅負</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // CFC total calculation
+  const cfcIncome = MOCK.cfcEntities.filter(e => parseFloat(e.taxRate) <= 14)
+    .reduce((s,e) => s + e.revenue * e.holding / 100, 0);
+  const cfcTax = cfcIncome > 1000000/30 ? cfcIncome * 0.20 : 0; // rough NTD estimate
+  document.getElementById('cfc-total').textContent = 'USD ' + fmt(Math.round(cfcIncome));
+  document.getElementById('cfc-tax').textContent   = 'USD ' + fmt(Math.round(cfcTax));
+
+  // CFC table body
+  document.getElementById('cfc-table-body').innerHTML = MOCK.cfcEntities.map(e => {
+    const cfcAmt = parseFloat(e.taxRate) <= 14 ? fmtUSD(e.revenue * e.holding / 100) : '—';
+    return `<tr>
+      <td class="fw-600">${e.name}</td>
+      <td>${e.jurisdiction}</td>
+      <td>${e.holding}%</td>
+      <td class="td-num">${fmtUSD(e.revenue)}</td>
+      <td style="color:${parseFloat(e.taxRate)<=14?'#DC3545':'#28A745'};">${e.taxRate}</td>
+      <td class="td-num fw-600">${cfcAmt}</td>
+      <td><span class="${e.status==='已申報'?'badge-ok':e.status==='申報中'?'badge-warn':'badge-warning'}">${e.status}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Tax calendar
+  const calColors = { done:'#28A745', upcoming:'#B8960C', overdue:'#DC3545' };
+  document.getElementById('tax-calendar').innerHTML = MOCK.cfcCalendar.map(c => `
+    <div class="calendar-item">
+      <div class="calendar-dot" style="background:${calColors[c.status]||'#6B7280'};"></div>
+      <div class="flex-1">
+        <div class="d-flex justify-content-between align-items-start">
+          <span class="fs-13 fw-600">${c.event}</span>
+          <span class="${c.status==='done'?'badge-ok':'badge-warn'} fs-11">${c.status==='done'?'已完成':'待辦'}</span>
+        </div>
+        <div class="fs-12 text-muted mt-1">${c.entity} · ${c.date}</div>
+      </div>
+    </div>`).join('');
+
+  // Compliance status cards
+  document.getElementById('compliance-cards').innerHTML = MOCK.taxCompliance.map(t => {
+    const isOk  = t.icon === 'check';
+    const isWrn = t.icon === 'warning';
+    const ic    = isOk ? 'fa-circle-check' : isWrn ? 'fa-triangle-exclamation' : 'fa-circle-xmark';
+    const cls   = isOk ? 'ok' : isWrn ? 'warn' : 'alert';
+    return `<div class="compliance-card">
+      <div class="compliance-icon ${cls}"><i class="fa-solid ${ic}"></i></div>
+      <div>
+        <div class="fs-12 fw-600">${t.item}</div>
+        <div class="fs-11 text-muted mt-1">${t.detail}</div>
+        <span class="${isOk?'badge-ok':isWrn?'badge-warn':'badge-warning'} mt-1 d-inline-block">${t.status}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Tax comparison table
+  document.getElementById('tax-compare-body').innerHTML = MOCK.taxComparison.map(row => `
+    <tr>
+      <td class="fw-600">${row.item}</td>
+      <td style="color:var(--port-a);">${row.portA}</td>
+      <td style="color:var(--port-b);">${row.portB}</td>
+      <td style="color:var(--port-c);">${row.portC}</td>
+    </tr>`).join('');
+});
+
+function runTaxSimulator() {
+  const cfcIncome  = parseFloat(document.getElementById('sim-cfc').value) || 0;
+  const divIncome  = parseFloat(document.getElementById('sim-div').value) || 0;
+  const interest   = parseFloat(document.getElementById('sim-interest').value) || 0;
+  const other      = parseFloat(document.getElementById('sim-other').value) || 0;
+  const divMethod  = document.getElementById('sim-div-method').value;
+
+  // Portfolio A: CFC minimum tax
+  const cfcExempt   = 1000000 / 30; // NTD exempt → USD equiv
+  const cfcTaxable  = Math.max(0, cfcIncome - cfcExempt);
+  const taxA        = cfcTaxable * 0.20;
+
+  // Portfolio B: dividend separate tax
+  const taxB_div    = divMethod === 'separate' ? divIncome * 0.28 : calcBracket(divIncome + other);
+  const taxB        = divMethod === 'separate' ? taxB_div + calcBracket(other) : taxB_div;
+
+  // Portfolio C: B rate minus interest deduction benefit
+  const deduction   = interest * 0.28; // approx marginal rate benefit
+  const taxC        = Math.max(0, taxB - deduction);
+
+  const results = [
+    { label: '境外投組 A', color: '#0D2746', tax: taxA, rate: cfcIncome>0?(taxA/cfcIncome*100).toFixed(1):'0',
+      note: `CFC 最低稅負 20%<br>免稅額扣除後 $${fmt(Math.round(cfcTaxable))}` },
+    { label: '境內投組 B', color: '#2E6DB4', tax: taxB, rate: divIncome>0?(taxB/divIncome*100).toFixed(1):'0',
+      note: `股利 28% 分離課稅<br>其他所得累進稅率` },
+    { label: '融資後資金 C', color: '#B8960C', tax: taxC, rate: divIncome>0?(taxC/divIncome*100).toFixed(1):'0',
+      note: `倫巴德利息 $${fmt(interest)} 扣除<br>節稅效果 $${fmt(Math.round(deduction))}` }
+  ];
+
+  document.getElementById('tax-sim-result').innerHTML = `
+    ${results.map(r => `
+      <div class="col-12 col-md-4">
+        <div class="tax-result-card" style="background:${r.color}15;border:2px solid ${r.color}40;">
+          <div class="fw-700 fs-13 mb-2" style="color:${r.color};">${r.label}</div>
+          <div style="font-size:22px;font-weight:700;color:${r.color};">$${fmt(Math.round(r.tax))}</div>
+          <div class="fs-12 text-muted mt-1">有效稅率 ${r.rate}%</div>
+          <div class="fs-11 text-muted mt-2" style="line-height:1.6;">${r.note}</div>
+        </div>
+      </div>`).join('')}
+    <div class="col-12">
+      <div class="p-3 rounded mt-1" style="background:#F8F9FB;border:1px solid var(--border);">
+        <div class="d-flex justify-content-around flex-wrap gap-3 text-center">
+          <div><div class="fs-12 text-muted">境外 A 稅負</div><div class="fw-700" style="color:#0D2746;">$${fmt(Math.round(taxA))}</div></div>
+          <div style="font-size:20px;color:var(--muted);">vs</div>
+          <div><div class="fs-12 text-muted">境內 B 稅負</div><div class="fw-700" style="color:#2E6DB4;">$${fmt(Math.round(taxB))}</div></div>
+          <div style="font-size:20px;color:var(--muted);">vs</div>
+          <div><div class="fs-12 text-muted">融資後 C 稅負</div><div class="fw-700" style="color:#B8960C;">$${fmt(Math.round(taxC))}</div></div>
+          <div><div class="fs-12 text-muted">倫巴德節稅效果</div><div class="fw-700 text-up">+$${fmt(Math.round(deduction))}</div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function calcBracket(income) {
+  // Simple Taiwan income tax bracket (NTD)
+  const brackets = MOCK.taxSimulator.brackets2024;
+  let tax = 0;
+  for (const b of brackets) {
+    if (income <= b.min) break;
+    tax += (Math.min(income, b.max) - b.min) * b.rate;
+    if (income <= b.max) break;
+  }
+  return tax;
+}
+</script>
+</body>
+</html>

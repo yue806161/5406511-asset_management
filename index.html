@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EAM 操作總覽 — Family Capital Platform</title>
+<meta name="description" content="EAM 操作總覽 — Family Capital Platform">
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- Main -->
+  <div class="main-content">
+
+    <!-- Ticker -->
+    <div class="market-ticker-wrap">
+      <div class="market-ticker">
+        <div class="market-ticker-inner" id="ticker-inner"></div>
+      </div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <span class="topbar-title">EAM 操作總覽</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3">
+        <i class="fa-solid fa-circle-user"></i>
+        <span>陳○○</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="page-body">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-row">
+        <i class="fa-solid fa-house"></i>
+        <span class="sep">/</span>
+        <span>EAM 操作總覽</span>
+      </div>
+
+      <!-- ── Narrative Strip ── -->
+      <div class="narrative-strip">
+        <div class="n-title"><i class="fa-solid fa-map me-1"></i>報告核心框架：跨境家族資本三階段治理流程</div>
+        <div class="narrative-flow">
+
+          <div class="n-step">
+            <div class="n-num">PHASE 1</div>
+            <div class="n-name">境外資產管理<br><span style="font-weight:400;opacity:0.75;font-size:12px;">OBU 外幣帳戶 + 全球配置</span></div>
+            <div class="n-regs">
+              <span class="n-reg-tag">財管2.0</span>
+              <span class="n-reg-tag">CFC § 12-1</span>
+              <span class="n-reg-tag">CRS/FATCA</span>
+              <span class="n-reg-tag">BVI/Cayman 信託架構</span>
+            </div>
+          </div>
+
+          <div class="n-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="n-step">
+            <div class="n-num">PHASE 2</div>
+            <div class="n-name">倫巴德融資<br><span style="font-weight:400;opacity:0.75;font-size:12px;">OBU 質押 → DBU 融資</span></div>
+            <div class="n-regs">
+              <span class="n-reg-tag">財管2.0 跨境融資</span>
+              <span class="n-reg-tag">103年令（外幣質押）</span>
+              <span class="n-reg-tag">LTV ≤ 65% 監控</span>
+            </div>
+          </div>
+
+          <div class="n-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="n-step">
+            <div class="n-num">PHASE 3</div>
+            <div class="n-name">境內台灣產業投資<br><span style="font-weight:400;opacity:0.75;font-size:12px;">融資後資金 → 境內限用</span></div>
+            <div class="n-regs">
+              <span class="n-reg-tag">財管2.0 境內運用</span>
+              <span class="n-reg-tag">地方資產管理專區</span>
+              <span class="n-reg-tag">證券投資信託顧問法</span>
+            </div>
+          </div>
+
+          <div class="n-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="n-step">
+            <div class="n-num">治理層</div>
+            <div class="n-name">EAM 全委 / 半委<br><span style="font-weight:400;opacity:0.75;font-size:12px;">投資政策聲明 IPS + 月報</span></div>
+            <div class="n-regs">
+              <span class="n-reg-tag">證投信顧法 § EAM</span>
+              <span class="n-reg-tag">家族治理 FMO</span>
+              <span class="n-reg-tag">IPS 風控框架</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── 5 Core Values Bar ── -->
+      <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+        <span style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-right:4px;">平台核心價值</span>
+        <span class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill" style="background:#EFF4FF;border:1px solid #C7D8F8;font-size:12px;font-weight:600;color:#0D2746;">
+          <i class="fa-solid fa-globe" style="color:#2E6DB4;font-size:11px;"></i> 全球視野 Global View
+        </span>
+        <span class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill" style="background:#EFF4FF;border:1px solid #C7D8F8;font-size:12px;font-weight:600;color:#0D2746;">
+          <i class="fa-solid fa-layer-group" style="color:#2E6DB4;font-size:11px;"></i> 資產整合 Total Integration
+        </span>
+        <span class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill" style="background:#EFF4FF;border:1px solid #C7D8F8;font-size:12px;font-weight:600;color:#0D2746;">
+          <i class="fa-solid fa-scale-balanced" style="color:#2E6DB4;font-size:11px;"></i> 稅務合規 Tax Compliance
+        </span>
+        <span class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill" style="background:#EFF4FF;border:1px solid #C7D8F8;font-size:12px;font-weight:600;color:#0D2746;">
+          <i class="fa-solid fa-shield-halved" style="color:#2E6DB4;font-size:11px;"></i> 風險控管 Risk Control
+        </span>
+        <span class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill" style="background:#EFF4FF;border:1px solid #C7D8F8;font-size:12px;font-weight:600;color:#0D2746;">
+          <i class="fa-solid fa-users" style="color:#2E6DB4;font-size:11px;"></i> 家族治理 Family Governance
+        </span>
+      </div>
+
+      <!-- ── 6 Function Modules ── -->
+      <div class="row g-2 mb-3" id="modules-row">
+        <div class="col-12"><div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">平台六大核心功能模組</div></div>
+      </div>
+      <div class="row g-2 mb-3">
+        <div class="col-6 col-sm-4 col-xl-2">
+          <a href="governance.html" class="text-decoration-none">
+            <div style="background:#fff;border:1px solid var(--border);border-top:3px solid #0D2746;border-radius:10px;padding:12px 14px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+              <div style="font-size:18px;margin-bottom:6px;">👨‍👩‍👧</div>
+              <div style="font-size:12px;font-weight:700;color:#0D2746;line-height:1.3;">家族治理<br>與傳承</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;">家族憲章・繼承規劃</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-xl-2">
+          <a href="assets.html" class="text-decoration-none">
+            <div style="background:#fff;border:1px solid var(--border);border-top:3px solid #2E6DB4;border-radius:10px;padding:12px 14px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+              <div style="font-size:18px;margin-bottom:6px;">🌐</div>
+              <div style="font-size:12px;font-weight:700;color:#0D2746;line-height:1.3;">全球資產<br>整合</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;">多銀行・資產配置</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-xl-2">
+          <a href="credit.html" class="text-decoration-none">
+            <div style="background:#fff;border:1px solid var(--border);border-top:3px solid #4CA3DD;border-radius:10px;padding:12px 14px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+              <div style="font-size:18px;margin-bottom:6px;">🏦</div>
+              <div style="font-size:12px;font-weight:700;color:#0D2746;line-height:1.3;">跨境信用<br>協調</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;">抵押管理・融資協調</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-xl-2">
+          <a href="portfolio.html" class="text-decoration-none">
+            <div style="background:#fff;border:1px solid var(--border);border-top:3px solid #B8960C;border-radius:10px;padding:12px 14px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+              <div style="font-size:18px;margin-bottom:6px;">📊</div>
+              <div style="font-size:12px;font-weight:700;color:#0D2746;line-height:1.3;">投資與<br>產業配置</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;">投組分析・機會評估</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-xl-2">
+          <a href="tax.html" class="text-decoration-none">
+            <div style="background:#fff;border:1px solid var(--border);border-top:3px solid #28A745;border-radius:10px;padding:12px 14px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+              <div style="font-size:18px;margin-bottom:6px;">📋</div>
+              <div style="font-size:12px;font-weight:700;color:#0D2746;line-height:1.3;">稅務與<br>合規管理</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;">CFC/CRS・稅務模擬</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-sm-4 col-xl-2">
+          <a href="#risk-section" class="text-decoration-none">
+            <div style="background:#fff;border:1px solid var(--border);border-top:3px solid #DC3545;border-radius:10px;padding:12px 14px;cursor:pointer;transition:box-shadow 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+              <div style="font-size:18px;margin-bottom:6px;">🛡️</div>
+              <div style="font-size:12px;font-weight:700;color:#0D2746;line-height:1.3;">風險與<br>績效監控</div>
+              <div style="font-size:10px;color:var(--muted);margin-top:4px;">風險儀表板・預警</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- ── Row 1: AUM / Geo / Allocation ── -->
+      <div class="row g-3 mb-3">
+
+        <!-- AUM Total -->
+        <div class="col-12 col-lg-4">
+          <div class="stat-card h-100">
+            <div class="card-label"><i class="fa-solid fa-globe me-1"></i>全球資產總覽</div>
+            <div class="card-value" id="aum-total"></div>
+            <div class="d-flex align-items-center gap-2 mt-2">
+              <span class="badge-up" id="aum-change"></span>
+              <span class="fs-12 text-muted">YTD 表現</span>
+            </div>
+            <hr class="my-3">
+            <!-- 3-portfolio split -->
+            <div class="d-flex flex-column gap-2" id="port-split"></div>
+          </div>
+        </div>
+
+        <!-- Geographic Distribution -->
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="stat-card h-100">
+            <div class="card-label"><i class="fa-solid fa-earth-asia me-1"></i>資產地區分布</div>
+            <div class="chart-container" style="height:160px;">
+              <canvas id="chart-geo"></canvas>
+            </div>
+            <div id="geo-legend" class="mt-2"></div>
+          </div>
+        </div>
+
+        <!-- Asset Allocation -->
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="stat-card h-100">
+            <div class="card-label"><i class="fa-solid fa-chart-pie me-1"></i>資產配置概覽</div>
+            <div class="chart-container d-flex justify-content-center" style="height:160px;">
+              <canvas id="chart-alloc"></canvas>
+              <div class="chart-donut-center">
+                <div style="font-size:18px;font-weight:700;color:#0D2746;">62%</div>
+                <div style="font-size:11px;color:#6B7280;">成長型</div>
+              </div>
+            </div>
+            <div id="alloc-legend" class="mt-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Row 2: Performance / Credit / Tax ── -->
+      <div class="row g-3 mb-3">
+
+        <!-- Portfolio Performance -->
+        <div class="col-12 col-lg-5">
+          <div class="section-card h-100">
+            <div class="card-header-row">
+              <div class="card-title"><i class="fa-solid fa-chart-line me-1"></i>三類投組績效 YTD</div>
+              <div>
+                <span class="badge-up fs-12 fw-700" id="ytd-perf"></span>
+                <span class="fs-12 text-muted ms-1">vs 基準</span>
+              </div>
+            </div>
+            <div style="position:relative;height:190px;"><canvas id="chart-perf"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Credit Summary -->
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="section-card h-100">
+            <div class="card-header-row">
+              <div class="card-title"><i class="fa-solid fa-building-columns me-1"></i>跨境信用與融資</div>
+              <a href="credit.html" class="fs-12 text-primary-mid" style="color:var(--primary-mid);">詳細 →</a>
+            </div>
+            <!-- KPIs -->
+            <div class="row g-2 mb-3" id="credit-kpis"></div>
+            <!-- LTV bars -->
+            <div class="section-title" style="font-size:11px;">倫巴德貸款 LTV 監控</div>
+            <div id="ltv-bars"></div>
+          </div>
+        </div>
+
+        <!-- Tax Compliance -->
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="section-card h-100">
+            <div class="card-header-row">
+              <div class="card-title"><i class="fa-solid fa-scale-balanced me-1"></i>稅務合規狀態</div>
+            </div>
+            <div id="tax-list" class="d-flex flex-column gap-2"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Row 3: Lombard Alert + Quick Actions ── -->
+      <div class="row g-3">
+        <div class="col-12 col-lg-8">
+          <div class="section-card">
+            <div class="card-header-row">
+              <div class="card-title"><i class="fa-solid fa-table me-1"></i>持倉摘要（前5名）</div>
+              <a href="assets.html" class="fs-12" style="color:var(--primary-mid);">查看全部 →</a>
+            </div>
+            <div class="overflow-auto">
+              <table class="data-table" id="top-holdings"></table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <!-- Quick links -->
+          <div class="section-card mb-3">
+            <div class="card-title mb-3"><i class="fa-solid fa-bolt me-1"></i>快速操作</div>
+            <div class="d-flex flex-column gap-2">
+              <a href="portfolio.html" class="btn btn-sm" style="background:#0D2746;color:#fff;border-radius:8px;text-align:left;">
+                <i class="fa-solid fa-plus me-2"></i>新建投資組合
+              </a>
+              <a href="credit.html" class="btn btn-sm" style="background:#2E6DB4;color:#fff;border-radius:8px;text-align:left;">
+                <i class="fa-solid fa-file-contract me-2"></i>倫巴德 LTV 監控
+              </a>
+              <a href="domestic.html" class="btn btn-sm" style="background:#B8960C;color:#fff;border-radius:8px;text-align:left;">
+                <i class="fa-solid fa-flag me-2"></i>境內投資部署
+              </a>
+              <a href="reports.html" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;text-align:left;">
+                <i class="fa-solid fa-download me-2"></i>下載最新報告
+              </a>
+            </div>
+          </div>
+
+          <!-- Messages preview -->
+          <div class="section-card">
+            <div class="card-header-row">
+              <div class="card-title"><i class="fa-solid fa-bell me-1"></i>最新訊息</div>
+              <a href="messages.html" class="fs-12" style="color:var(--primary-mid);">全部 →</a>
+            </div>
+            <div id="msg-preview"></div>
+          </div>
+        </div>
+
+      </div>
+      <!-- ── Row 4: Risk Dashboard ── -->
+      <div class="row g-3 mt-1" id="risk-section">
+        <!-- Risk Score + VaR + Metrics -->
+        <div class="col-12 col-lg-4">
+          <div class="section-card h-100" style="border-top:3px solid #DC3545;">
+            <div class="card-title mb-3"><i class="fa-solid fa-gauge me-1" style="color:#DC3545;"></i>整體風險評分</div>
+            <!-- SVG Gauge -->
+            <div class="text-center mb-3">
+              <svg viewBox="0 0 120 70" style="width:180px;" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15,65 A50,50 0 0,1 105,65" fill="none" stroke="#F3F5F8" stroke-width="10" stroke-linecap="round"/>
+                <path d="M15,65 A50,50 0 0,1 105,65" fill="none" stroke="url(#riskGrad)" stroke-width="10" stroke-linecap="round"
+                  stroke-dasharray="157" stroke-dashoffset="50"/>
+                <defs>
+                  <linearGradient id="riskGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#28A745"/>
+                    <stop offset="50%" style="stop-color:#B8960C"/>
+                    <stop offset="100%" style="stop-color:#DC3545"/>
+                  </linearGradient>
+                </defs>
+                <text x="60" y="60" text-anchor="middle" font-size="18" font-weight="700" fill="#0D2746">68</text>
+                <text x="60" y="70" text-anchor="middle" font-size="7" fill="#6B7280">中高風險</text>
+              </svg>
+            </div>
+            <div id="risk-indicators" class="d-flex flex-column gap-2"></div>
+          </div>
+        </div>
+        <!-- Per-portfolio risk metrics -->
+        <div class="col-12 col-lg-4">
+          <div class="section-card h-100">
+            <div class="card-title mb-3"><i class="fa-solid fa-chart-area me-1"></i>三類投組風險指標</div>
+            <div id="port-risk-table"></div>
+          </div>
+        </div>
+        <!-- Alerts -->
+        <div class="col-12 col-lg-4">
+          <div class="section-card h-100">
+            <div class="card-header-row mb-3">
+              <div class="card-title"><i class="fa-solid fa-triangle-exclamation me-1" style="color:#DC3545;"></i>預警與績效評估</div>
+            </div>
+            <div id="perf-vs-bench" class="mb-3"></div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">預警事項</div>
+            <div id="alert-list" class="d-flex flex-column gap-2"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-body -->
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('EAM 操作總覽');
+
+  // Date
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+
+  // ── AUM Total ──
+  document.getElementById('aum-total').textContent = fmtUSD(MOCK.aum.total);
+  document.getElementById('aum-change').textContent = fmtPct(MOCK.aum.change);
+
+  // ── 3-portfolio split ──
+  const ps = document.getElementById('port-split');
+  ['portA','portB','portC'].forEach(key => {
+    const p = MOCK.aum[key];
+    ps.innerHTML += `
+      <div>
+        <div class="d-flex justify-content-between mb-1">
+          <span class="fs-12 fw-600" style="color:${p.color};">${p.label}</span>
+          <span class="fs-12 fw-700">${fmtUSD(p.value)} <span class="text-muted">(${p.pct}%)</span></span>
+        </div>
+        <div class="progress-bar-custom">
+          <div class="progress-bar-fill" style="width:${p.pct}%;background:${p.color};"></div>
+        </div>
+      </div>`;
+  });
+
+  // ── Geo Doughnut ──
+  const geoCtx = document.getElementById('chart-geo').getContext('2d');
+  new Chart(geoCtx, {
+    type: 'doughnut',
+    data: {
+      labels: MOCK.geographic.map(g => g.region),
+      datasets: [{ data: MOCK.geographic.map(g => g.pct), backgroundColor: MOCK.geographic.map(g => g.color), borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: {
+      cutout: '65%', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } }
+    }
+  });
+  // Legend
+  document.getElementById('geo-legend').innerHTML = MOCK.geographic.map(g =>
+    `<div class="d-flex justify-content-between fs-12 mb-1">
+       <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${g.color};margin-right:6px;"></span>${g.region}</span>
+       <span class="fw-600">${g.pct}%</span>
+     </div>`).join('');
+
+  // ── Alloc Doughnut ──
+  const allocCtx = document.getElementById('chart-alloc').getContext('2d');
+  new Chart(allocCtx, {
+    type: 'doughnut',
+    data: {
+      labels: MOCK.assetAllocation.map(a => a.label),
+      datasets: [{ data: MOCK.assetAllocation.map(a => a.value), backgroundColor: MOCK.assetAllocation.map(a => a.color), borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: {
+      cutout: '65%', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } }
+    }
+  });
+  document.getElementById('alloc-legend').innerHTML = MOCK.assetAllocation.map(a =>
+    `<div class="d-flex justify-content-between fs-12 mb-1">
+       <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${a.color};margin-right:6px;"></span>${a.label}</span>
+       <span class="fw-600">${a.value}%</span>
+     </div>`).join('');
+
+  // ── Performance Line ──
+  const perfCtx = document.getElementById('chart-perf').getContext('2d');
+  const md = MOCK.portfolioYTD.monthlyData;
+  document.getElementById('ytd-perf').textContent = fmtPct(MOCK.portfolioYTD.performance);
+  new Chart(perfCtx, {
+    type: 'line',
+    data: {
+      labels: md.map(m => m.month),
+      datasets: [
+        { label: '境外A', data: md.map(m => m.portA), borderColor: '#0D2746', backgroundColor: 'rgba(13,39,70,0.08)', tension: 0.4, pointRadius: 3, borderWidth: 2, fill: true },
+        { label: '境內B', data: md.map(m => m.portB), borderColor: '#2E6DB4', backgroundColor: 'rgba(46,109,180,0.06)', tension: 0.4, pointRadius: 3, borderWidth: 2, fill: false },
+        { label: '融資C', data: md.map(m => m.portC), borderColor: '#B8960C', backgroundColor: 'rgba(184,150,12,0.06)', tension: 0.4, pointRadius: 3, borderWidth: 2, fill: false },
+        { label: '基準',  data: md.map(m => m.benchmark), borderColor: '#DEE2E6', borderDash: [4,4], tension: 0.3, pointRadius: 0, borderWidth: 1.5, fill: false }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10 } } },
+      scales: {
+        y: { ticks: { callback: v => v + '%' }, grid: { color: '#F3F5F8' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // ── Credit KPIs ──
+  const c = MOCK.credit;
+  const kpis = [
+    { label: '總授信額度', value: fmtUSD(c.totalLimit) },
+    { label: '已動用',     value: fmtUSD(c.used) },
+    { label: '槓桿比率',   value: c.leverageRatio + '%' },
+    { label: '加權平均利率', value: c.avgCost + '%' }
+  ];
+  document.getElementById('credit-kpis').innerHTML = kpis.map(k =>
+    `<div class="col-6">
+       <div style="background:#F3F5F8;border-radius:8px;padding:10px 12px;">
+         <div class="fs-12 text-muted">${k.label}</div>
+         <div class="fw-700" style="font-size:15px;color:#0D2746;">${k.value}</div>
+       </div>
+     </div>`).join('');
+
+  // LTV bars
+  document.getElementById('ltv-bars').innerHTML = MOCK.banks.filter(b => b.dbuLoan).map(b => {
+    const loan = b.dbuLoan;
+    const color = loan.ltv >= 60 ? '#DC3545' : loan.ltv >= 50 ? '#B8960C' : '#28A745';
+    return `<div class="ltv-row">
+      <div class="ltv-label">${b.name}</div>
+      <div class="ltv-bar">
+        <div class="progress-bar-custom">
+          <div class="progress-bar-fill" style="width:${loan.ltv}%;background:${color};"></div>
+        </div>
+      </div>
+      <div class="ltv-val" style="color:${color};">${loan.ltv}%</div>
+    </div>`;
+  }).join('');
+
+  // ── Tax Compliance ──
+  document.getElementById('tax-list').innerHTML = MOCK.taxCompliance.map(t => {
+    const isOk = t.icon === 'check';
+    const isWarn = t.icon === 'warning';
+    const bg   = isOk ? '#d4edda' : isWarn ? '#fff3cd' : '#f8d7da';
+    const col  = isOk ? '#155724' : isWarn ? '#856404' : '#721c24';
+    const ico  = isOk ? 'fa-check-circle' : isWarn ? 'fa-triangle-exclamation' : 'fa-circle-xmark';
+    return `<div class="d-flex align-items-center gap-2 p-2 rounded" style="background:${bg}10;border:1px solid ${bg};">
+      <i class="fa-solid ${ico}" style="color:${col};font-size:13px;flex-shrink:0;"></i>
+      <div>
+        <div class="fs-12 fw-600" style="color:${col};">${t.item}</div>
+        <div class="fs-12 text-muted">${t.status}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── Top Holdings ──
+  const allHoldings = [
+    ...MOCK.holdingsA.map(h => ({ ...h, port: 'A' })),
+    ...MOCK.holdingsB.map(h => ({ ...h, port: 'B' })),
+    ...MOCK.holdingsC.map(h => ({ ...h, port: 'C' }))
+  ].sort((a,b) => b.value - a.value).slice(0, 5);
+
+  document.getElementById('top-holdings').innerHTML = `
+    <thead><tr>
+      <th>持倉名稱</th><th>類型</th><th>投組</th><th class="td-num">市值 (USD)</th><th class="td-num">YTD</th>
+    </tr></thead>
+    <tbody>${allHoldings.map(h => `
+      <tr>
+        <td class="fw-600">${h.name}${h.pledged ? ' <span class="badge-pledged fs-12">🔒質押</span>' : ''}</td>
+        <td>${h.type}</td>
+        <td>${portBadge(h.port)}</td>
+        <td class="td-num">${fmtUSD(h.value)}</td>
+        <td class="td-num ${changeClass(h.change)}">${changeIcon(h.change)} ${Math.abs(h.change).toFixed(1)}%</td>
+      </tr>`).join('')}
+    </tbody>`;
+
+  // ── Messages Preview ──
+  const unread = MOCK.messages.filter(m => !m.read).slice(0, 3);
+  document.getElementById('msg-preview').innerHTML = unread.map(m => {
+    const iconMap = { alert:'fa-circle-exclamation', warning:'fa-triangle-exclamation', info:'fa-circle-info', success:'fa-circle-check' };
+    const clsMap  = { alert:'alert', warning:'warning', info:'info', success:'success' };
+    return `<div class="msg-item unread">
+      <div class="msg-icon ${clsMap[m.type]}"><i class="fa-solid ${iconMap[m.type] || 'fa-bell'}"></i></div>
+      <div class="flex-1 min-w-0">
+        <div class="fs-13 fw-600">${m.title}</div>
+        <div class="fs-12 text-muted">${m.date}</div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="fs-12 text-muted p-2">無未讀訊息</div>';
+
+  // ── Risk Dashboard ──
+  const rm = MOCK.riskMetrics;
+  // Asset security indicators
+  const pledgedVal = MOCK.holdingsA.filter(h=>h.pledged).reduce((s,h)=>s+h.value,0);
+  const pledgedPct = (pledgedVal/MOCK.aum.portA.value*100).toFixed(1);
+  document.getElementById('risk-indicators').innerHTML = [
+    { label:'整體 LTV',    value: MOCK.credit.leverageRatio+'%', max:35, cur:MOCK.credit.leverageRatio, color: MOCK.credit.leverageRatio>30?'#B8960C':'#28A745', warn:'IPS上限 35%' },
+    { label:'A銀行 LTV',   value: MOCK.banks[0].dbuLoan.ltv+'%', max:65, cur:MOCK.banks[0].dbuLoan.ltv, color: MOCK.banks[0].dbuLoan.ltv>55?'#DC3545':'#28A745', warn:'警戒 60% / 上限 65%' },
+    { label:'質押比率',     value: pledgedPct+'%',    max:80, cur:parseFloat(pledgedPct), color:'#2E6DB4', warn:'境外投組A已質押' },
+    { label:'合規通過率',  value: MOCK.taxCompliance.filter(t=>t.icon==='check').length+'/'+MOCK.taxCompliance.length, max:100, cur:MOCK.taxCompliance.filter(t=>t.icon==='check').length/MOCK.taxCompliance.length*100, color:'#28A745', warn:'稅務合規狀態' }
+  ].map(r => `
+    <div style="background:#F8F9FB;border-radius:8px;padding:10px 12px;">
+      <div class="d-flex justify-content-between mb-1">
+        <span class="fs-12">${r.label}</span>
+        <span class="fs-12 fw-700" style="color:${r.color};">${r.value}</span>
+      </div>
+      <div class="progress-bar-custom">
+        <div class="progress-bar-fill" style="width:${Math.min(r.cur/r.max*100,100)}%;background:${r.color};"></div>
+      </div>
+      <div class="fs-11 text-muted mt-1">${r.warn}</div>
+    </div>`).join('');
+
+  // Per-portfolio risk table
+  document.getElementById('port-risk-table').innerHTML = `
+    <table class="data-table" style="font-size:12px;">
+      <thead><tr><th>投組</th><th class="td-num">波動率</th><th class="td-num">夏普</th><th class="td-num">最大回撤</th><th class="td-num">Beta</th><th class="td-num">Alpha</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge-port-a">境外 A</span></td>
+          <td class="td-num">${rm.portA.volatility}%</td>
+          <td class="td-num text-up fw-600">${rm.portA.sharpe}</td>
+          <td class="td-num text-down">${rm.portA.maxDrawdown}%</td>
+          <td class="td-num">${rm.portA.beta}</td>
+          <td class="td-num text-up fw-600">${fmtPct(rm.portA.alpha)}</td>
+        </tr>
+        <tr>
+          <td><span class="badge-port-b">境內 B</span></td>
+          <td class="td-num">${rm.portB.volatility}%</td>
+          <td class="td-num text-up fw-600">${rm.portB.sharpe}</td>
+          <td class="td-num text-down">${rm.portB.maxDrawdown}%</td>
+          <td class="td-num">${rm.portB.beta}</td>
+          <td class="td-num text-up fw-600">${fmtPct(rm.portB.alpha)}</td>
+        </tr>
+        <tr>
+          <td><span class="badge-port-c">融資 C</span></td>
+          <td class="td-num" style="color:${rm.portC.volatility>20?'#DC3545':'inherit'}">${rm.portC.volatility}%${rm.portC.volatility>20?' ⚠️':''}</td>
+          <td class="td-num">${rm.portC.sharpe}</td>
+          <td class="td-num text-down">${rm.portC.maxDrawdown}%</td>
+          <td class="td-num">${rm.portC.beta}</td>
+          <td class="td-num text-up">${fmtPct(rm.portC.alpha)}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="fs-11 text-muted mt-2">VaR(95%): A ${rm.portA.var95}% / B ${rm.portB.var95}% / C ${rm.portC.var95}%</div>`;
+
+  // Performance vs benchmark
+  const portfoliomd = MOCK.portfolioYTD.monthlyData.at(-1);
+  document.getElementById('perf-vs-bench').innerHTML = [
+    { label:'境外投組 A', perf:portfoliomd.portA, color:'#0D2746' },
+    { label:'境內投組 B', perf:portfoliomd.portB, color:'#2E6DB4' },
+    { label:'融資後 C',   perf:portfoliomd.portC, color:'#B8960C' }
+  ].map(p => {
+    const alpha = (p.perf - portfoliomd.benchmark).toFixed(2);
+    const ac = parseFloat(alpha)>=0?'#28A745':'#DC3545';
+    return `<div class="d-flex align-items-center justify-content-between p-2 rounded mb-1" style="background:#F8F9FB;">
+      <span class="fs-12 fw-600" style="color:${p.color};">${p.label}</span>
+      <span class="fs-12 fw-700" style="color:${p.color};">${fmtPct(p.perf)}</span>
+      <span class="fs-11 fw-700" style="color:${ac};">α ${fmtPct(parseFloat(alpha),2)}</span>
+    </div>`;
+  }).join('');
+
+  // Alert list from riskMetrics
+  document.getElementById('alert-list').innerHTML = rm.alerts.map(a => {
+    const lvlMap = { high:['#f8d7da','#721c24','fa-circle-exclamation'], medium:['#fff3cd','#856404','fa-triangle-exclamation'], low:['#d4edda','#155724','fa-circle-info'] };
+    const [bg,col,ico] = lvlMap[a.level]||lvlMap.low;
+    return `<div class="d-flex align-items-start gap-2 p-2 rounded" style="background:${bg}40;border:1px solid ${bg};">
+      <i class="fa-solid ${ico} mt-1 flex-shrink-0" style="color:${col};font-size:12px;"></i>
+      <div class="flex-1">
+        <div class="fs-12" style="color:${col};">${a.msg}</div>
+        <a href="${a.page}" class="fs-11" style="color:#2E6DB4;">→ 查看詳情</a>
+      </div>
+    </div>`;
+  }).join('');
+});
+</script>
+</body>
+</html>

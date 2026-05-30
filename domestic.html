@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>境內台灣產業投資 — Family Capital Platform</title>
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="market-ticker-wrap"><div class="market-ticker"><div class="market-ticker-inner" id="ticker-inner"></div></div></div>
+    <div class="topbar">
+      <span class="topbar-title">境內台灣產業投資</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3"><i class="fa-solid fa-circle-user"></i><span>陳○○</span></div>
+    </div>
+    <div class="page-body">
+      <div class="breadcrumb-row">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <span class="sep">/</span>
+        <a href="credit.html">銀行與融資</a>
+        <span class="sep">/</span>
+        <span>境內台灣產業投資</span>
+      </div>
+
+      <!-- Info Banner -->
+      <div style="background:linear-gradient(135deg,#B8960C,#d4a816);border-radius:14px;padding:20px 24px;color:#fff;margin-bottom:22px;">
+        <div class="d-flex align-items-start gap-4 flex-wrap">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:13px;opacity:0.8;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">融資後資金 C — 境內限制</div>
+            <div style="font-size:20px;font-weight:700;margin:6px 0;">境內台灣產業投資專頁</div>
+            <div style="font-size:12px;opacity:0.85;line-height:1.6;">
+              依據財管2.0政策及「金融業申請進駐地方資產管理專區試辦業務」規定，
+              倫巴德貸款融資後資金限於投資境內台灣產業，本頁追蹤融資後資金 C 的部署狀況。
+            </div>
+          </div>
+          <div class="d-flex flex-column gap-2 text-end">
+            <div style="font-size:12px;opacity:0.8;">已部署金額</div>
+            <div style="font-size:28px;font-weight:700;" id="deployed-amount"></div>
+            <div style="font-size:12px;opacity:0.8;">YTD 報酬 <span id="ytd-return" style="font-weight:700;"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reg Bar -->
+      <div class="reg-bar">
+        <span class="reg-label"><i class="fa-solid fa-scale-balanced me-1"></i>法規依據</span>
+        <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>財管2.0 § 境內資金運用規定</span>
+        <span class="reg-tag"><i class="fa-solid fa-flag"></i>金融業申請進駐地方資產管理專區試辦業務作業原則</span>
+        <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>證券投資信託及顧問法（EAM 業務範圍）</span>
+        <span class="reg-tag"><i class="fa-solid fa-file-lines"></i>103年令：倫巴德融資後境內限制用途</span>
+      </div>
+
+      <!-- ── KPI Row ── -->
+      <div class="kpi-grid mb-3" id="domestic-kpis"></div>
+
+      <!-- ── Sector + Holdings ── -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-5">
+          <div class="section-card h-100">
+            <div class="card-title mb-3"><i class="fa-solid fa-chart-pie me-1"></i>產業配置分布</div>
+            <div class="chart-container d-flex justify-content-center" style="height:220px;">
+              <canvas id="chart-sector"></canvas>
+            </div>
+            <div id="sector-legend" class="mt-3"></div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-7">
+          <div class="section-card h-100">
+            <div class="card-title mb-3"><i class="fa-solid fa-list me-1"></i>境內持倉明細</div>
+            <div class="overflow-auto">
+              <table class="data-table">
+                <thead><tr>
+                  <th>資產名稱</th><th>類型</th><th class="td-num">市值 (USD)</th><th class="td-num">佔比</th><th class="td-num">YTD</th>
+                </tr></thead>
+                <tbody id="domestic-holdings"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Deployment Progress ── -->
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-6">
+          <div class="section-card">
+            <div class="card-title mb-3"><i class="fa-solid fa-chart-bar me-1"></i>月度部署進度</div>
+            <div style="position:relative;height:200px;"><canvas id="chart-deploy"></canvas></div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="section-card">
+            <div class="card-title mb-3"><i class="fa-solid fa-road me-1"></i>投資管線（Pipeline）</div>
+            <div id="pipeline-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Regulatory Compliance ── -->
+      <div class="section-card mb-3">
+        <div class="card-header-row">
+          <div class="card-title"><i class="fa-solid fa-shield-halved me-1"></i>法規遵循狀態</div>
+        </div>
+        <div class="row g-3" id="reg-compliance"></div>
+      </div>
+
+      <!-- ── New Investment Form ── -->
+      <div class="section-card">
+        <div class="card-title mb-3"><i class="fa-solid fa-plus me-1"></i>新增境內投資申請</div>
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <label class="form-label fw-600 fs-13">投資標的名稱</label>
+            <input type="text" class="form-control form-control-sm" id="new-name" placeholder="例：TW-生技 I 輪">
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label fw-600 fs-13">產業類別</label>
+            <select class="form-select form-select-sm" id="new-sector">
+              <option>半導體/IC設計</option>
+              <option>生技醫療</option>
+              <option>新能源/ESG</option>
+              <option>智慧製造/AI</option>
+              <option>基礎建設/REITs</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-2">
+            <label class="form-label fw-600 fs-13">投資金額 (USD)</label>
+            <input type="number" class="form-control form-control-sm" id="new-amount" placeholder="500,000">
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label fw-600 fs-13">投資類型</label>
+            <select class="form-select form-select-sm" id="new-type">
+              <option>股票</option>
+              <option>私募股權</option>
+              <option>ETF</option>
+              <option>不動產</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-sm" style="background:#B8960C;color:#fff;border-radius:8px;padding:8px 20px;" onclick="submitInvestment()">
+              <i class="fa-solid fa-paper-plane me-1"></i>送出申請（送 EAM 審核）
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('境內台灣產業投資');
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+
+  const d = MOCK.domestic;
+
+  document.getElementById('deployed-amount').textContent = fmtUSD(d.totalDeployed);
+  document.getElementById('ytd-return').textContent      = fmtPct(d.ytdReturn);
+
+  // KPIs
+  const remaining = d.targetDeployed - d.totalDeployed;
+  document.getElementById('domestic-kpis').innerHTML = [
+    { label: '已部署金額',   value: fmtUSD(d.totalDeployed),  icon: 'fa-circle-check',  color: '#28A745' },
+    { label: '投資目標',     value: fmtUSD(d.targetDeployed), icon: 'fa-bullseye',       color: '#0D2746' },
+    { label: '尚待部署',     value: fmtUSD(remaining),        icon: 'fa-hourglass-half', color: '#B8960C' },
+    { label: 'YTD 報酬率',   value: fmtPct(d.ytdReturn),      icon: 'fa-chart-line',     color: '#28A745' },
+    { label: '部署進度',     value: Math.round(d.totalDeployed/d.targetDeployed*100)+'%', icon: 'fa-percent', color: '#2E6DB4' }
+  ].map(k => `<div class="stat-card">
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <i class="fa-solid ${k.icon}" style="color:${k.color};font-size:15px;"></i>
+      <span class="card-label mb-0">${k.label}</span>
+    </div>
+    <div class="card-value" style="font-size:19px;">${k.value}</div>
+  </div>`).join('');
+
+  // Sector donut
+  new Chart(document.getElementById('chart-sector').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: d.sectors.map(s => s.name),
+      datasets: [{ data: d.sectors.map(s => s.pct), backgroundColor: d.sectors.map(s => s.color), borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: { cutout: '60%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+  document.getElementById('sector-legend').innerHTML = d.sectors.map(s =>
+    `<div class="d-flex justify-content-between fs-12 mb-2">
+       <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${s.color};margin-right:6px;"></span>${s.name}</span>
+       <span class="fw-600">${s.pct}% (${fmtUSD(s.value)})</span>
+     </div>`).join('');
+
+  // Holdings
+  document.getElementById('domestic-holdings').innerHTML = MOCK.holdingsC.map(h => `<tr>
+    <td class="fw-600">${h.name}</td>
+    <td>${h.type}</td>
+    <td class="td-num">${fmtUSD(h.value)}</td>
+    <td class="td-num">${h.pct}%</td>
+    <td class="td-num ${changeClass(h.change)}">${changeIcon(h.change)} ${Math.abs(h.change).toFixed(1)}%</td>
+  </tr>`).join('');
+
+  // Deploy chart
+  new Chart(document.getElementById('chart-deploy').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['1月','2月','3月','4月','5月'],
+      datasets: [
+        { label: '當月新增 (USD M)', data: [3, 3, 3, 3, 3], backgroundColor: '#B8960C', borderRadius: 4 },
+        { label: '累計部署 (USD M)', data: [3, 6, 9, 12, 15], type: 'line', borderColor: '#0D2746', backgroundColor: 'transparent', tension: 0.3, pointRadius: 4, yAxisID: 'y' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } },
+      scales: {
+        y: { ticks: { callback: v => '$' + v + 'M' }, grid: { color: '#F3F5F8' }, max: 20 },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // Pipeline
+  const stageColors = { '盡職調查': '#2E6DB4', '條款協商': '#B8960C', '評估中': '#6B7280' };
+  document.getElementById('pipeline-list').innerHTML = d.pipeline.map(p => `
+    <div class="d-flex align-items-start gap-3 p-3 mb-2 rounded" style="background:#F8F9FB;border:1px solid var(--border);">
+      <div style="width:36px;height:36px;border-radius:8px;background:${stageColors[p.stage]||'#ccc'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid fa-briefcase" style="color:#fff;font-size:14px;"></i>
+      </div>
+      <div class="flex-1">
+        <div class="fw-600 fs-13">${p.name}</div>
+        <div class="fs-12 text-muted">${p.type} · ${fmtUSD(p.amount)}</div>
+      </div>
+      <span class="badge-info fs-12">${p.stage}</span>
+    </div>`).join('');
+
+  // Regulatory compliance
+  const regs = [
+    { title: '財管2.0 境內投資規定', status: '符合', detail: '融資後資金 100% 投入境內台灣產業', icon: 'ok' },
+    { title: '地方資產管理專區試辦', status: '申請中', detail: '金管會審查第二階段，預計 Q3 核准', icon: 'warn' },
+    { title: '投資標的合規審查',     status: '通過',   detail: '10 支標的均通過 EAM 合規審查',     icon: 'ok' },
+    { title: '倫巴德資金追蹤機制',   status: '運作中', detail: '月度資金追蹤報告自動產出',           icon: 'ok' }
+  ];
+  document.getElementById('reg-compliance').innerHTML = regs.map(r => `
+    <div class="col-12 col-md-6">
+      <div class="compliance-card">
+        <div class="compliance-icon ${r.icon}">
+          <i class="fa-solid ${r.icon==='ok'?'fa-check-circle':r.icon==='warn'?'fa-clock':'fa-exclamation-circle'}"></i>
+        </div>
+        <div>
+          <div class="fs-13 fw-600">${r.title}</div>
+          <div class="fs-12 text-muted mt-1">${r.detail}</div>
+          <span class="${r.icon==='ok'?'badge-ok':'badge-warn'} mt-2 d-inline-block">${r.status}</span>
+        </div>
+      </div>
+    </div>`).join('');
+});
+
+function submitInvestment() {
+  const name   = document.getElementById('new-name').value || '未命名';
+  const sector = document.getElementById('new-sector').value;
+  const amount = parseInt(document.getElementById('new-amount').value) || 0;
+  const type   = document.getElementById('new-type').value;
+  alert(`✅ 投資申請已提交\n標的：${name}\n產業：${sector}\n類型：${type}\n金額：${fmtUSD(amount)}\n\n（模擬：已送 EAM 審核，預計 3 個工作日內回覆）`);
+}
+</script>
+</body>
+</html>

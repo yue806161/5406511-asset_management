@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文件中心 — Family Capital Platform</title>
+<link rel="icon" href="img/favicon.ico" type="image/favicon.ico">
+<link rel="icon" href="img/favicon.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="market-ticker-wrap"><div class="market-ticker"><div class="market-ticker-inner" id="ticker-inner"></div></div></div>
+    <div class="topbar">
+      <span class="topbar-title">文件中心</span>
+      <span class="topbar-meta" id="topbar-date"></span>
+      <div class="topbar-user ms-3"><i class="fa-solid fa-circle-user"></i><span>陳○○</span></div>
+    </div>
+    <div class="page-body">
+      <div class="breadcrumb-row">
+        <a href="index.html"><i class="fa-solid fa-house"></i></a>
+        <span class="sep">/</span>
+        <span id="bc-folder">文件中心</span>
+      </div>
+
+      <!-- Folder grid -->
+      <div id="folder-view">
+        <div class="section-title">文件資料夾</div>
+        <div class="row g-3 mb-4" id="folder-grid"></div>
+      </div>
+
+      <!-- File list (hidden until folder selected) -->
+      <div id="file-view" style="display:none;">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <button class="btn btn-sm" style="border:1px solid var(--border);border-radius:8px;" onclick="backToFolders()">
+            <i class="fa-solid fa-arrow-left me-1"></i>返回
+          </button>
+          <span class="fw-700" id="folder-title"></span>
+        </div>
+        <div class="section-card">
+          <div class="card-header-row mb-3">
+            <div class="card-title" id="file-count"></div>
+            <button class="btn btn-sm" style="background:#0D2746;color:#fff;border-radius:8px;font-size:12px;">
+              <i class="fa-solid fa-upload me-1"></i>上傳文件
+            </button>
+          </div>
+          <div id="file-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/mockdata.js"></script>
+<script src="js/common.js"></script>
+<script>
+const FOLDERS = [
+  { name: '合規文件',   icon: '📋', color: '#0D2746', desc: 'CFC/CRS申報、地方專區申請' },
+  { name: '倫巴德文件', icon: '🔒', color: '#B8960C', desc: '各銀行質押授信合約' },
+  { name: '投資政策',   icon: '📄', color: '#2E6DB4', desc: 'IPS、家族憲章、授權書' },
+  { name: '報告存檔',   icon: '📊', color: '#28A745', desc: '季報、月報、年報存檔' }
+];
+
+const FILE_ICONS = { PDF: '📕', Word: '📘', Excel: '📗', PPT: '📙' };
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderShell('文件中心');
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric' });
+
+  document.getElementById('folder-grid').innerHTML = FOLDERS.map(f => {
+    const count = MOCK.documents.filter(d => d.folder === f.name).length;
+    return `<div class="col-6 col-sm-4 col-lg-3">
+      <div class="stat-card" style="cursor:pointer;border-top:3px solid ${f.color};transition:box-shadow 0.15s;"
+           onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'"
+           onmouseout="this.style.boxShadow=''"
+           onclick="openFolder('${f.name}')">
+        <div style="font-size:28px;margin-bottom:8px;">${f.icon}</div>
+        <div class="fw-700 fs-13">${f.name}</div>
+        <div class="fs-12 text-muted mt-1">${f.desc}</div>
+        <div class="mt-2"><span class="badge-info fs-12">${count} 份文件</span></div>
+      </div>
+    </div>`;
+  }).join('');
+});
+
+function openFolder(folderName) {
+  const files = MOCK.documents.filter(d => d.folder === folderName);
+  document.getElementById('folder-view').style.display = 'none';
+  document.getElementById('file-view').style.display   = '';
+  document.getElementById('folder-title').textContent  = '📁 ' + folderName;
+  document.getElementById('file-count').textContent    = `共 ${files.length} 份文件`;
+
+  // Update breadcrumb
+  document.getElementById('bc-folder').innerHTML =
+    `<a href="#" onclick="backToFolders();return false;" style="color:var(--primary-mid);">文件中心</a>
+     <span class="sep mx-1">/</span>${folderName}`;
+
+  document.getElementById('file-list').innerHTML = files.map(f => `
+    <div class="doc-row">
+      <div class="doc-icon">${FILE_ICONS[f.type] || '📄'}</div>
+      <div class="doc-name">${f.name}</div>
+      <div class="doc-meta"><span class="badge-info fs-12 me-2">${f.type}</span>${f.size}</div>
+      <div class="doc-meta ms-2">${f.date}</div>
+      <div class="d-flex gap-1 ms-2">
+        <button class="btn btn-sm" style="border:1px solid var(--border);border-radius:6px;font-size:11px;padding:2px 8px;" onclick="viewDoc('${f.id}')">查閱</button>
+        <button class="btn btn-sm" style="background:#0D2746;color:#fff;border-radius:6px;font-size:11px;padding:2px 8px;" onclick="downloadDoc('${f.id}')">下載</button>
+      </div>
+    </div>`).join('');
+}
+
+function backToFolders() {
+  document.getElementById('folder-view').style.display = '';
+  document.getElementById('file-view').style.display   = 'none';
+  document.getElementById('bc-folder').textContent     = '文件中心';
+}
+
+function viewDoc(id) {
+  const d = MOCK.documents.find(d => d.id === id);
+  alert(`👁 查閱：${d.name}\n（模擬：實際系統將開啟文件預覽）`);
+}
+
+function downloadDoc(id) {
+  const d = MOCK.documents.find(d => d.id === id);
+  alert(`📥 下載：${d.name}\n大小：${d.size}\n（模擬：實際系統將下載文件）`);
+}
+</script>
+</body>
+</html>

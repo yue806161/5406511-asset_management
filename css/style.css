@@ -17,7 +17,7 @@
   --text:         #1A2B45;
   --muted:        #6B7280;
   --border:       #DEE2E6;
-  --sidebar-w:    260px;
+  --sidebar-w:    300px;
 
   /* Portfolio type colours */
   --port-a:  #0D2746;   /* 境外投組 A */
@@ -38,7 +38,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Noto Sans TC', sans-serif;
-  font-size: 14px;
+  font-size: 21px;
   line-height: 1.5;
 }
 
@@ -71,7 +71,7 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .sidebar-logo .platform-name {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 700;
   color: #fff;
   letter-spacing: 0.5px;
@@ -80,7 +80,7 @@ body {
   text-overflow: ellipsis;
 }
 .sidebar-logo .platform-sub {
-  font-size: 11px;
+  font-size: 17px;
   color: rgba(255,255,255,0.55);
 }
 
@@ -95,14 +95,14 @@ body {
   border-radius: 50%;
   background: var(--primary-mid);
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px; color: #fff;
+  font-size: 24px; color: #fff;
   flex-shrink: 0;
 }
 .avatar-info .name {
-  font-size: 13px; font-weight: 600; color: #fff;
+  font-size: 20px; font-weight: 600; color: #fff;
 }
 .avatar-info .role {
-  font-size: 11px; color: rgba(255,255,255,0.55);
+  font-size: 17px; color: rgba(255,255,255,0.55);
 }
 
 .sidebar-divider {
@@ -116,7 +116,7 @@ body {
   flex: 1;
 }
 .sidebar-nav .nav-label {
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 700;
   color: rgba(255,255,255,0.35);
   letter-spacing: 1px;
@@ -131,12 +131,12 @@ body {
   border-radius: 8px;
   text-decoration: none;
   color: rgba(255,255,255,0.75);
-  font-size: 13.5px;
+  font-size: 20px;
   transition: background 0.15s, color 0.15s;
   white-space: nowrap;
 }
 .sidebar-nav a i {
-  width: 18px; text-align: center; font-size: 14px; flex-shrink: 0;
+  width: 18px; text-align: center; font-size: 21px; flex-shrink: 0;
 }
 .sidebar-nav a:hover {
   background: rgba(255,255,255,0.08);
@@ -151,7 +151,7 @@ body {
   margin-left: auto;
   background: var(--red);
   color: #fff;
-  font-size: 10px;
+  font-size: 15px;
   padding: 1px 6px;
   border-radius: 10px;
   font-weight: 600;
@@ -171,7 +171,7 @@ body {
 
 /* ── 6. Topbar ───────────────────────────────────────────── */
 .topbar {
-  height: 58px;
+  height: 68px;
   background: var(--bg-white);
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -183,7 +183,7 @@ body {
   z-index: 200;
 }
 .topbar-title {
-  font-size: 15px;
+  font-size: 23px;
   font-weight: 700;
   color: var(--primary);
   flex: 1;
@@ -193,13 +193,13 @@ body {
   white-space: nowrap;
 }
 .topbar-meta {
-  font-size: 12px;
+  font-size: 18px;
   color: var(--muted);
   white-space: nowrap;
 }
 .topbar-user {
   display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 600; color: var(--primary);
+  font-size: 20px; font-weight: 600; color: var(--primary);
   white-space: nowrap;
 }
 
@@ -220,7 +220,7 @@ body {
   height: 100%;
 }
 .stat-card .card-label {
-  font-size: 11px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -228,13 +228,13 @@ body {
   margin-bottom: 6px;
 }
 .stat-card .card-value {
-  font-size: 26px;
+  font-size: 39px;
   font-weight: 700;
   color: var(--primary);
   line-height: 1.2;
 }
 .stat-card .card-sub {
-  font-size: 12px;
+  font-size: 18px;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -252,39 +252,39 @@ body {
   margin-bottom: 16px;
 }
 .section-card .card-title {
-  font-size: 14px;
+  font-size: 21px;
   font-weight: 700;
   color: var(--primary);
 }
 
 /* ── 9. Badges ───────────────────────────────────────────── */
-.badge-up   { background: #d4edda; color: #155724; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-down { background: #f8d7da; color: #721c24; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-warn { background: #fff3cd; color: #856404; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-info { background: #cfe2ff; color: #084298; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-gold { background: #fef3cd; color: #7a6000; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-ok   { background: #d4edda; color: #155724; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-pledged { background: #fff3cd; color: #856404; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-free    { background: #d4edda; color: #155724; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-warning { background: #f8d7da; color: #721c24; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-up   { background: #d4edda; color: #155724; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-down { background: #f8d7da; color: #721c24; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-warn { background: #fff3cd; color: #856404; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-info { background: #cfe2ff; color: #084298; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-gold { background: #fef3cd; color: #7a6000; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-ok   { background: #d4edda; color: #155724; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-pledged { background: #fff3cd; color: #856404; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-free    { background: #d4edda; color: #155724; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-warning { background: #f8d7da; color: #721c24; font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
 
 /* Portfolio type badges */
-.badge-port-a { background: rgba(13,39,70,0.12);  color: var(--port-a); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-port-b { background: rgba(46,109,180,0.12); color: var(--port-b); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
-.badge-port-c { background: rgba(184,150,12,0.15); color: var(--port-c); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-port-a { background: rgba(13,39,70,0.12);  color: var(--port-a); font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-port-b { background: rgba(46,109,180,0.12); color: var(--port-b); font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-port-c { background: rgba(184,150,12,0.15); color: var(--port-c); font-size: 17px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
 
 /* ── 10. Tables ──────────────────────────────────────────── */
 .data-table,
 .data-table-gov {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 20px;
 }
 .data-table th,
 .data-table-gov th {
   background: #F3F5F8;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 17px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -336,7 +336,7 @@ body {
   align-items: center;
   gap: 6px;
   padding: 7px 22px;
-  font-size: 12px;
+  font-size: 18px;
   color: rgba(255,255,255,0.85);
   border-right: 1px solid rgba(255,255,255,0.1);
 }
@@ -387,9 +387,9 @@ body {
   gap: 10px;
   margin-bottom: 8px;
 }
-.ltv-label { font-size: 12px; color: var(--text); min-width: 80px; }
+.ltv-label { font-size: 18px; color: var(--text); min-width: 80px; }
 .ltv-bar   { flex: 1; }
-.ltv-val   { font-size: 12px; font-weight: 600; min-width: 40px; text-align: right; }
+.ltv-val   { font-size: 18px; font-weight: 600; min-width: 40px; text-align: right; }
 
 /* ── 16. Portfolio Tabs ──────────────────────────────────── */
 .port-tabs {
@@ -404,7 +404,7 @@ body {
 .port-tab {
   padding: 7px 20px;
   border-radius: 7px;
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 500;
   color: var(--muted);
   cursor: pointer;
@@ -429,13 +429,13 @@ body {
   color: #fff;
   margin-bottom: 24px;
 }
-.mandate-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-.mandate-desc  { font-size: 12px; color: rgba(255,255,255,0.65); margin-bottom: 18px; }
+.mandate-title { font-size: 23px; font-weight: 700; margin-bottom: 6px; }
+.mandate-desc  { font-size: 18px; color: rgba(255,255,255,0.65); margin-bottom: 18px; }
 .mandate-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
 .mandate-btn {
   padding: 10px 22px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 600;
   cursor: pointer;
   border: 2px solid rgba(255,255,255,0.3);
@@ -455,15 +455,15 @@ body {
   display: inline-flex; align-items: center; gap: 6px;
   background: rgba(255,255,255,0.15);
   border-radius: 20px; padding: 4px 12px;
-  font-size: 12px; color: rgba(255,255,255,0.9);
+  font-size: 18px; color: rgba(255,255,255,0.9);
 }
 .mandate-status-chip .dot {
   width: 7px; height: 7px; border-radius: 50%;
 }
 
 /* ── 18. Tax Comparison Table ────────────────────────────── */
-.tax-compare-table th { font-size: 12px; }
-.tax-compare-table td { font-size: 12px; }
+.tax-compare-table th { font-size: 18px; }
+.tax-compare-table td { font-size: 18px; }
 .tax-compare-table .port-A { color: var(--port-a); font-weight: 700; }
 .tax-compare-table .port-B { color: var(--port-b); font-weight: 700; }
 .tax-compare-table .port-C { color: var(--port-c); font-weight: 700; }
@@ -481,7 +481,7 @@ body {
 .compliance-icon {
   width: 40px; height: 40px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
+  font-size: 27px; flex-shrink: 0;
 }
 .compliance-icon.ok     { background: #d4edda; color: #155724; }
 .compliance-icon.warn   { background: #fff3cd; color: #856404; }
@@ -512,9 +512,9 @@ body {
 }
 .timeline-item.done::before { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
 .timeline-item.active::before { background: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
-.timeline-date  { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
-.timeline-title { font-size: 13px; font-weight: 600; color: var(--primary); }
-.timeline-desc  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.timeline-date  { font-size: 17px; color: var(--muted); margin-bottom: 2px; }
+.timeline-title { font-size: 20px; font-weight: 600; color: var(--primary); }
+.timeline-desc  { font-size: 18px; color: var(--muted); margin-top: 2px; }
 
 /* ── 21. EAM Structure Tiers ─────────────────────────────── */
 .eam-tier {
@@ -526,9 +526,9 @@ body {
 .eam-tier-1 { background: var(--primary); color: #fff; }
 .eam-tier-2 { background: var(--primary-mid); color: #fff; }
 .eam-tier-3 { background: #F0F4FB; color: var(--text); border: 2px solid var(--primary-light); }
-.eam-tier .tier-label { font-size: 11px; font-weight: 700; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; }
-.eam-tier .tier-name  { font-size: 15px; font-weight: 700; margin: 2px 0; }
-.eam-tier .tier-desc  { font-size: 12px; opacity: 0.75; }
+.eam-tier .tier-label { font-size: 17px; font-weight: 700; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; }
+.eam-tier .tier-name  { font-size: 23px; font-weight: 700; margin: 2px 0; }
+.eam-tier .tier-desc  { font-size: 18px; opacity: 0.75; }
 .tier-arrow { text-align: center; color: var(--muted); font-size: 18px; margin: 4px 0; }
 
 /* ── 22. Sidebar Overlay (mobile) ────────────────────────── */
@@ -552,7 +552,7 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 24px;
   flex-shrink: 0;
 }
 
@@ -569,7 +569,7 @@ body {
   border-radius: 10px;
   padding: 18px 20px;
 }
-.sim-result .res-label { font-size: 11px; opacity: 0.65; }
+.sim-result .res-label { font-size: 17px; opacity: 0.65; }
 .sim-result .res-value { font-size: 20px; font-weight: 700; }
 
 /* ── 25. Message Items ───────────────────────────────────── */
@@ -587,7 +587,7 @@ body {
 .msg-icon {
   width: 38px; height: 38px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
+  font-size: 24px; flex-shrink: 0;
 }
 .msg-icon.warning { background: #fff3cd; color: #856404; }
 .msg-icon.info    { background: #cfe2ff; color: #084298; }
@@ -601,16 +601,16 @@ body {
   padding: 11px 14px;
   border-bottom: 1px solid #F3F5F8;
   gap: 12px;
-  font-size: 13px;
+  font-size: 20px;
 }
 .doc-row:hover { background: #F8F9FB; }
 .doc-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
 .doc-name { flex: 1; color: var(--text); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.doc-meta { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.doc-meta { font-size: 17px; color: var(--muted); white-space: nowrap; }
 
 /* ── 27. Section headings ────────────────────────────────── */
 .section-title {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--primary);
   text-transform: uppercase;
@@ -625,7 +625,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 18px;
   color: var(--muted);
   margin-bottom: 18px;
 }
@@ -688,7 +688,7 @@ body {
   margin-bottom: 16px;
 }
 .reg-bar .reg-label {
-  font-size: 11px;
+  font-size: 17px;
   font-weight: 700;
   color: #0D2746;
   opacity: 0.65;
@@ -702,14 +702,14 @@ body {
   background: #fff;
   color: #0D2746;
   border: 1px solid #A8C4F0;
-  font-size: 11px;
+  font-size: 17px;
   font-weight: 600;
   padding: 3px 9px;
   border-radius: 4px;
   white-space: nowrap;
   cursor: default;
 }
-.reg-tag i { font-size: 10px; color: #2E6DB4; }
+.reg-tag i { font-size: 15px; color: #2E6DB4; }
 .reg-tag:hover { background: #EFF4FF; }
 
 /* Narrative flow strip (index.html) */
@@ -721,7 +721,7 @@ body {
   margin-bottom: 22px;
 }
 .narrative-strip .n-title {
-  font-size: 11px;
+  font-size: 17px;
   font-weight: 700;
   opacity: 0.6;
   text-transform: uppercase;
@@ -742,14 +742,14 @@ body {
   padding: 14px 16px;
   border: 1px solid rgba(255,255,255,0.12);
 }
-.n-step .n-num  { font-size: 10px; opacity: 0.45; font-weight: 700; letter-spacing: 1px; }
-.n-step .n-name { font-size: 13px; font-weight: 700; margin: 4px 0 10px; line-height: 1.3; }
+.n-step .n-num  { font-size: 15px; opacity: 0.45; font-weight: 700; letter-spacing: 1px; }
+.n-step .n-name { font-size: 20px; font-weight: 700; margin: 4px 0 10px; line-height: 1.3; }
 .n-step .n-regs { display: flex; flex-wrap: wrap; gap: 4px; }
 .n-reg-tag {
   background: rgba(255,255,255,0.12);
   border: 1px solid rgba(255,255,255,0.22);
   color: rgba(255,255,255,0.88);
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 600;
   padding: 2px 7px;
   border-radius: 4px;
@@ -760,7 +760,7 @@ body {
   align-items: center;
   padding: 0 4px;
   color: rgba(255,255,255,0.3);
-  font-size: 16px;
+  font-size: 24px;
   flex-shrink: 0;
   align-self: center;
 }
@@ -776,8 +776,10 @@ body {
 .text-muted   { color: var(--muted)   !important; }
 .fw-700 { font-weight: 700 !important; }
 .fw-600 { font-weight: 600 !important; }
-.fs-12 { font-size: 12px !important; }
-.fs-13 { font-size: 13px !important; }
+.fs-12 { font-size: 18px !important; }
+.fs-13 { font-size: 20px !important; }
+.fs-11 { font-size: 17px !important; }
+.fs-20 { font-size: 30px !important; }
 .gap-8  { gap: 8px !important; }
 .gap-12 { gap: 12px !important; }
 .mt-3px { margin-top: 3px; }

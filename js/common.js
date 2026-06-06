@@ -52,7 +52,7 @@ function buildSidebar() {
       <div class="d-flex align-items-center gap-2 mb-1">
         <img src="img/logo.png" alt="logo" style="width:36px;height:36px;border-radius:6px;flex-shrink:0;object-fit:cover;">
         <div>
-          <div class="platform-name" style="font-size:11.5px;line-height:1.3;">跨境家族資本治理平台</div>
+          <div class="platform-name" style="font-size:18px;line-height:1.3;">跨境家族資本治理平台</div>
           <div class="platform-sub">Family Capital Governance</div>
         </div>
       </div>

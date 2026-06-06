@@ -322,7 +322,7 @@
       <!-- ── Row 4: Risk Dashboard ── -->
       <div class="row g-3 mt-1" id="risk-section">
         <!-- Risk Score + VaR + Metrics -->
-        <div class="col-12 col-lg-4">
+        <div class="col">
           <div class="section-card h-100" style="border-top:3px solid #DC3545;">
             <div class="card-title mb-3"><i class="fa-solid fa-gauge me-1" style="color:#DC3545;"></i>整體風險評分</div>
             <!-- SVG Gauge -->
@@ -346,14 +346,14 @@
           </div>
         </div>
         <!-- Per-portfolio risk metrics -->
-        <div class="col-12 col-lg-4">
+        <!-- <div class="col-12 col-lg-4">
           <div class="section-card h-100">
             <div class="card-title mb-3"><i class="fa-solid fa-chart-area me-1"></i>三類投組風險指標</div>
             <div id="port-risk-table"></div>
           </div>
-        </div>
+        </div> -->
         <!-- Alerts -->
-        <div class="col-12 col-lg-4">
+        <div class="col">
           <div class="section-card h-100">
             <div class="card-header-row mb-3">
               <div class="card-title"><i class="fa-solid fa-triangle-exclamation me-1" style="color:#DC3545;"></i>預警與績效評估</div>
@@ -526,10 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
     <tbody>${allHoldings.map(h => `
       <tr>
         <td class="fw-600">${h.name}${h.pledged ? ' <span class="badge-pledged fs-12">🔒質押</span>' : ''}</td>
-        <td>${h.type}</td>
-        <td>${portBadge(h.port)}</td>
-        <td class="td-num">${fmtUSD(h.value)}</td>
-        <td class="td-num ${changeClass(h.change)}">${changeIcon(h.change)} ${Math.abs(h.change).toFixed(1)}%</td>
+        <td style="width:120px;">${h.type}</td>
+        <td style="width:100px;">${portBadge(h.port)}</td>
+        <td class="td-num" >${fmtUSD(h.value)}</td>
+        <td style="width:150px;" class="td-num ${changeClass(h.change)}">${changeIcon(h.change)} ${Math.abs(h.change).toFixed(1)}%</td>
       </tr>`).join('')}
     </tbody>`;
 
@@ -570,49 +570,49 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>`).join('');
 
   // Per-portfolio risk table
-  document.getElementById('port-risk-table').innerHTML = `
-    <table class="data-table" style="font-size:12px;table-layout:fixed;width:100%;">
-      <colgroup>
-        <col style="width:22%">
-        <col style="width:13%"><col style="width:13%">
-        <col style="width:17%"><col style="width:13%"><col style="width:13%">
-      </colgroup>
-      <thead><tr>
-        <th style="white-space:nowrap;">投組</th>
-        <th class="td-num" style="white-space:nowrap;">波動率</th>
-        <th class="td-num" style="white-space:nowrap;">夏普</th>
-        <th class="td-num" style="white-space:nowrap;">最大回撤</th>
-        <th class="td-num">Beta</th>
-        <th class="td-num">Alpha</th>
-      </tr></thead>
-      <tbody>
-        <tr>
-          <td style="white-space:nowrap;"><span class="badge-port-a" style="white-space:nowrap;">境外 A</span></td>
-          <td class="td-num">${rm.portA.volatility}%</td>
-          <td class="td-num text-up fw-600">${rm.portA.sharpe}</td>
-          <td class="td-num text-down">${rm.portA.maxDrawdown}%</td>
-          <td class="td-num">${rm.portA.beta}</td>
-          <td class="td-num text-up fw-600">${fmtPct(rm.portA.alpha)}</td>
-        </tr>
-        <tr>
-          <td style="white-space:nowrap;"><span class="badge-port-b" style="white-space:nowrap;">境內 B</span></td>
-          <td class="td-num">${rm.portB.volatility}%</td>
-          <td class="td-num text-up fw-600">${rm.portB.sharpe}</td>
-          <td class="td-num text-down">${rm.portB.maxDrawdown}%</td>
-          <td class="td-num">${rm.portB.beta}</td>
-          <td class="td-num text-up fw-600">${fmtPct(rm.portB.alpha)}</td>
-        </tr>
-        <tr>
-          <td style="white-space:nowrap;"><span class="badge-port-c" style="white-space:nowrap;">融資 C</span></td>
-          <td class="td-num" style="color:${rm.portC.volatility>20?'#DC3545':'inherit'}">${rm.portC.volatility}%${rm.portC.volatility>20?' ⚠️':''}</td>
-          <td class="td-num">${rm.portC.sharpe}</td>
-          <td class="td-num text-down">${rm.portC.maxDrawdown}%</td>
-          <td class="td-num">${rm.portC.beta}</td>
-          <td class="td-num text-up">${fmtPct(rm.portC.alpha)}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="fs-11 text-muted mt-2">VaR(95%): A ${rm.portA.var95}% / B ${rm.portB.var95}% / C ${rm.portC.var95}%</div>`;
+  // document.getElementById('port-risk-table').innerHTML = `
+  //   <table class="data-table" style="font-size:12px;table-layout:fixed;width:100%;">
+  //     <colgroup>
+  //       <col style="width:22%" > 
+  //       <col styl e= "w i d th:13%"> <col style="width:13%">
+  //       < c ol style="width:17%" > <col style="width:13%"><col style="width:13%">
+  //     </colgroup>
+  //     <thead><tr> 
+  //    <th style="white-space:nowrap;"> 投 組</th>
+   //        <th class="td-num" style="white-space:nowrap;">波動率</th>
+    //        <t h  class="td-num"  style="white-space:nowrap;"> 夏普</th>
+        //  <th class="td-num" style= " white-spa ce:nowra p;">最大回撤</th>
+  //       <th class="td-num">Beta</th>
+  //          <th c l ass="td-num">Alp ha</th>
+  //     </tr></thead>
+   //     dy>
+  //       < t r>
+          //  <td  style="white-space:nowrap;">< span class="badg e-port-a" style="white-spac e:nowrap >境外 A</span></td>
+  //         <t d  class= "td -num">${rm.port A .vo l atility}%</td>
+  //         <t d class=" td-num text-up fw-600">${rm .p ortA.s har pe}</td>
+  //           <td class="td-num  t ext-down">$ {rm.portA.maxDra wdown}%</td>
+  //         <td class="td-num">${rm.portA.beta}</td>
+  //         <td class="td-num text-up fw-600">${fmtPct(rm.portA.alpha)}</td>
+  //       </tr>
+  //       <tr>
+  //         <td style="white-space:nowrap;"><span class="badge-port-b" style="white-space:nowrap;">境內 B</span></td>
+  //         <td class="td-num">${rm.portB.volatility}%</td>
+  //         <td class="td-num text-up fw-600"> $ {rm.p o rtB. sharpe}</td>
+  //         <td class="td-num text-down">${rm.portB.maxDrawdown}%</td>
+  //         <td class="td-num">${rm.portB.beta}</td>
+  //         <td class="td-num text-up fw-600">${fmtPct(rm.portB.alpha)}</td>
+  //       </tr>
+  //       <tr>
+  //         <td style="white-space:nowrap;"><span class="badge-port-c" style="white-space:nowrap;">融資 C</span></td>
+  //         <td class="td-num" style="color:${rm.portC.volatility>20?'#DC3545':'inherit'}">${rm.portC.volatility}%${rm.portC.volatility>20?' ⚠️':''}</td>
+  //         <td class="td-num">${rm.portC.sharpe}</td>
+  //         <td class="td-num text-down">${rm.portC.maxDrawdown}%</td>
+  //         <td class="td-num">${rm.portC.beta}</td>
+  //         <td class="td-num text-up">${fmtPct(rm.portC.alpha)}</td>
+  //       </tr>
+  //     </tbody>
+  //   </table>
+  //   <div class="fs-11 text-muted mt-2">VaR(95%): A ${rm.portA.var95}% / B ${rm.portB.var95}% / C ${rm.portC.var95}%</div>`;
 
   // Performance vs benchmark
   const portfoliomd = MOCK.portfolioYTD.monthlyData.at(-1);

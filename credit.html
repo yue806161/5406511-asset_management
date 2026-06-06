@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <td>${l.type}</td>
       <td class="td-num">${fmtUSD(l.limit)}</td>
       <td class="td-num">${fmtUSD(l.used)}</td>
-      <td class="td-num">
+      <td class="td-num" style="width:20px;">
         <div class="progress-bar-custom" style="width:80px;display:inline-block;vertical-align:middle;">
           <div class="progress-bar-fill" style="width:${usePct}%;background:#0D2746;"></div>
         </div>
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <td class="td-num fw-700" style="color:${barColor};">${l.ltv}%</td>
       <td class="td-num">${l.rate}%</td>
       <td>${l.currency}</td>
-      <td><span class="${l.ltv>=60?'badge-warning':l.ltv>=50?'badge-warn':'badge-ok'}">${l.ltv>=60?'警示':l.ltv>=50?'注意':'正常'}</span></td>
+      <td><span class="${l.ltv >= 60 ? 'badge-warning' : l.ltv >= 50 ? 'badge-warn' : 'badge-ok'}" style="width:20px;">${l.ltv >= 60 ? '警示' : l.ltv >= 50 ? '注意' : '正常'}</span></td>
     </tr>`;
   }).join('');
 
